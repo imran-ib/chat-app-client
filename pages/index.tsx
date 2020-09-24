@@ -1,11 +1,8 @@
-import React from 'react'
+import Layout from "../components/Layout/Layout";
+import React from "react";
 
 const index = () => {
-    return (
-        <div>
-            Hom Page
-        </div>
-    )
-}
+  return <Layout>Hom Page</Layout>;
+};
 
-export default index
+export default index;

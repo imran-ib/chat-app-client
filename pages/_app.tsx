@@ -1,6 +1,7 @@
 import { AppProps } from "next/app";
 import { ApolloProvider } from "@apollo/react-hooks";
 import withData from "../components/lib/withData";
+import { GlobalStyles } from "../components/styles/Global";
 
 interface MyProps extends AppProps {
   apollo: any;
@@ -9,6 +10,7 @@ interface MyProps extends AppProps {
 function MyApp({ Component, pageProps, apollo }: MyProps) {
   return (
     <ApolloProvider client={apollo}>
+      <GlobalStyles />
       <Component {...pageProps} />
     </ApolloProvider>
   );
