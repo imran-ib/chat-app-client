@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -9,6 +9,7 @@ import Login from "./AccountForms/Login";
 import ForgetPassword from "./AccountForms/ForgotPassword";
 import styled from "styled-components";
 import { customMedia } from "components/styles/Global";
+import OneTimePassword from "./AccountForms/InputOneTimePassword";
 
 const AccountCard = styled.div`
   margin-right: 2.5rem;
@@ -49,6 +50,7 @@ const Home = () => {
             {state.Register && <Register />}
             {state.Login && <Login />}
             {state.ForgotPassword && <ForgetPassword />}
+            {state.OTPInput && <OneTimePassword />}
           </AccountCard>
         </Col>
       </Row>

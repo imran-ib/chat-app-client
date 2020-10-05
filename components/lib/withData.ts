@@ -1,45 +1,41 @@
-import { ApolloClient, ApolloLink, InMemoryCache } from "@apollo/client";
-import { onError } from "@apollo/link-error";
-import { getDataFromTree } from "@apollo/react-ssr";
-import { createUploadLink } from "apollo-upload-client";
+import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import withApollo from "next-with-apollo";
+import { getDataFromTree } from "@apollo/react-ssr";
 
-const endpoint = `http://localhost:4000`;
-// const prodEndpoint = "https://ebazar-server.herokuapp.com/";
+function createApolloClient() {
+  // Declare variable to store authToken
+  let token: string | null;
 
-function createClient({ headers, initialState }: any) {
-  const client = new ApolloClient({
-    link: ApolloLink.from([
-      onError(({ graphQLErrors, networkError }) => {
-        if (graphQLErrors)
-          graphQLErrors.forEach(({ message, locations, path }) =>
-            console.log(
-              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-            )
-          );
-        if (networkError)
-          console.log(
-            `[Network error]: ${networkError}. Backend is unreachable. Is it running?`
-          );
-      }),
-      // this uses apollo-link-http under the hood, so all the options here come from that package
-      createUploadLink({
-        uri: process.env.NODE_ENV === "development" ? endpoint : endpoint,
-       
-        fetchOptions: {
-          credentials: "include",
-        },
-        // pass the headers along from this request. This enables SSR with logged in state
-        headers,
-      }),
-    ]),
-    cache: new InMemoryCache().restore(initialState || {}),
+  const httpLink = createHttpLink({
+    uri: "http://localhost:4000/",
+    credentials: "same-origin",
   });
-  // client.clearStore();
+
+  const authLink = setContext((_, { headers }) => {
+    // get the authentication token from local storage if it exists
+    if (typeof window !== "undefined") {
+      token = localStorage.getItem("token");
+    }
+    // return the headers to the context so httpLink can read them
+    return {
+      headers: {
+        ...headers,
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    };
+  });
+
+  const client = new ApolloClient({
+    ssrMode: typeof window === "undefined",
+    link: authLink.concat(httpLink),
+    cache: new InMemoryCache(),
+  });
+
   return client;
 }
 
 //@ts-ignore
-export default withApollo(createClient, {
+export default withApollo(createApolloClient, {
   getDataFromTree,
 });

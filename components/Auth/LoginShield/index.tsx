@@ -4,35 +4,33 @@ import {
 } from "components/styles/SharedStyles";
 import React from "react";
 import styled from "styled-components";
-import { useStore } from "../HomeState";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Alert from "react-bootstrap/Alert";
 import {
   usePasswordLoginMutation,
-  CurrentUserDocument,
+  useCurrentUserQuery,
 } from "generated/graphql";
-import OPTFormComponent from "./OTPForm";
 import { useAuthStore } from "components/Auth/Auth";
 import { useRouter } from "next/router";
+import { customMedia } from "components/styles/Global";
 
 type FormValues = {
   emailOrUsername: string;
   password: string;
 };
 
-const Login: React.FC<any> = () => {
+const LoginShield: React.FC<any> = () => {
   const Router = useRouter();
   const dispatch = useAuthStore((state) => state.dispatch);
   const [PasswordLogin, { loading, error }] = usePasswordLoginMutation({
-    refetchQueries: [{ query: CurrentUserDocument }],
     onCompleted: (data) => {
       // @ts-ignore
       dispatch({ type: "Login", payload: data?.PasswordLogin });
       Router.push("/user/chat");
     },
   });
+  const { refetch } = useCurrentUserQuery();
   const { register, handleSubmit, errors } = useForm<FormValues>();
-  const state = useStore();
   const onSubmit: SubmitHandler<FormValues> = async ({
     emailOrUsername,
     password,
@@ -42,12 +40,14 @@ const Login: React.FC<any> = () => {
         emailOrUsername,
         password,
       },
+    }).then(() => {
+      refetch();
     });
   };
 
   return (
     <LoginStyles>
-      <Heading>Login</Heading>
+      <Heading className="mt-5">Please Login Before Continuing</Heading>
       {error && (
         <Alert
           variant="danger"
@@ -93,30 +93,21 @@ const Login: React.FC<any> = () => {
           ) : (
             <button className="custom-btn btn">Login</button>
           )}
-          {/* 
-          //@ts-ignore */}
-          <a onClick={() => state.setShowForgetPassword()}>Forgot Password.?</a>
         </ButtonGroup>
 
         <p className="form-footer-text">
           Don't Have An Account? {/* 
           //@ts-ignore */}
-          <a onClick={() => state.setShowRegister()}>Register</a>{" "}
+          <a onClick={() => Router.push("/")}>Register</a>{" "}
         </p>
       </Form>
-      {/* OPT Form */}
-      <OPTFormComponent />
     </LoginStyles>
   );
 };
 
-const Text = styled.p`
-  font-size: 2rem;
-  text-align: center;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+const LoginStyles = styled.div`
+  margin-top: 10rem !important;
 `;
-const LoginStyles = styled.div``;
 
 const ButtonGroup = styled.div`
   display: flex;
@@ -129,7 +120,11 @@ const ButtonGroup = styled.div`
   }
 `;
 
-const Heading = styled(AccountFormMainHeading)``;
+const Heading = styled(AccountFormMainHeading)`
+  ${customMedia.lessThan("medium")`
+    font-size: 2rem;
+  `}
+`;
 const Form = styled(AccountForm)`
   .custom-btn {
     padding: 1rem 2rem 1rem 2rem;
@@ -140,4 +135,4 @@ const Form = styled(AccountForm)`
   }
 `;
 
-export default Login;
+export default LoginShield;

@@ -16,6 +16,7 @@ export const AccountForm = styled.form`
 
   & input[type="text"],
   input[type="email"],
+  input[type="number"],
   input[type="password"] {
     border: none;
     font-size: 1.8rem;
