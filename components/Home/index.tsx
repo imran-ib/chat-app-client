@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -10,6 +10,8 @@ import ForgetPassword from "./AccountForms/ForgotPassword";
 import styled from "styled-components";
 import { customMedia } from "components/styles/Global";
 import OneTimePassword from "./AccountForms/InputOneTimePassword";
+import { useUser } from "components/Auth/Auth";
+import { useRouter } from "next/router";
 
 const AccountCard = styled.div`
   margin-right: 2.5rem;
@@ -38,6 +40,9 @@ const Logo = styled.img`
 
 const Home = () => {
   const state = useStore();
+  const user = useUser();
+  const Router = useRouter();
+  if (user) Router.push("/user/profile");
   return (
     <Container>
       <Row>

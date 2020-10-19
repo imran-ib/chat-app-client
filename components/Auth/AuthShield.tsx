@@ -12,7 +12,6 @@ const AuthShield: React.FC<Props> = ({ children }) => {
   if (!user)
     return (
       <Container className="mt-5">
-        {" "}
         <LoginShield />
       </Container>
     );

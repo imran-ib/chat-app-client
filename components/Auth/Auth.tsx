@@ -1,7 +1,7 @@
 import { useCurrentUserQuery } from "generated/graphql";
 import create from "zustand";
 import { AuthReducer } from "./AuthReducer";
-import { devtools } from "zustand/middleware";
+import { devtools, redux } from "zustand/middleware";
 import jwt_decode from "jwt-decode";
 
 // Remove token if it is expire
@@ -17,13 +17,6 @@ if (token) {
     localStorage.removeItem("token");
   }
 }
-const useAuthStore = create(
-  devtools((set) => ({
-    user: null,
-    //@ts-ignore
-    dispatch: (args) => set((state) => AuthReducer(state, args)),
-  }))
-);
 
 function useUser() {
   const { loading, data, error, called } = useCurrentUserQuery();
@@ -34,5 +27,25 @@ function useUser() {
     return null;
   }
 }
+const initialState = null
+
+
+ const useAuthStore = create(
+  // Connects store to devtools
+  // Without reducers and action-types you would see "setState" logged out instead
+  devtools(
+    // Transforms our store into a redux action dispatcher ...
+    // Adds a dispatch method to the store as well as to the api
+    redux(AuthReducer, initialState)
+  )
+)
+
+// const useAuthStore = create(
+//   devtools((set) => ({
+//     user: null,
+//     //@ts-ignore
+//     dispatch: (args) => set((state) => AuthReducer(state, args)),
+//   }))
+// );
 
 export { useUser, useAuthStore };

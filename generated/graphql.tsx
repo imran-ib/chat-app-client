@@ -18,12 +18,84 @@ export type User = {
   email: Scalars['String'];
   avatar?: Maybe<Scalars['String']>;
   username: Scalars['String'];
+  friends: Array<User>;
+  MessagesRecieved: Array<Messages>;
+  MessagesSent: Array<Messages>;
+  followedBy: Array<User>;
+  following: Array<User>;
+  isActive: Scalars['Boolean'];
+  lastSeen?: Maybe<Scalars['String']>;
+  FriendRequestRecieved: Array<FriendsRequest>;
+  FriendRequsetSent: Array<FriendsRequest>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+
+export type UserFriendsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<UserWhereUniqueInput>;
+  after?: Maybe<UserWhereUniqueInput>;
+};
+
+
+export type UserMessagesRecievedArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<MessagesWhereUniqueInput>;
+  after?: Maybe<MessagesWhereUniqueInput>;
+};
+
+
+export type UserMessagesSentArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<MessagesWhereUniqueInput>;
+  after?: Maybe<MessagesWhereUniqueInput>;
+};
+
+
+export type UserFollowedByArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<UserWhereUniqueInput>;
+  after?: Maybe<UserWhereUniqueInput>;
+};
+
+
+export type UserFollowingArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<UserWhereUniqueInput>;
+  after?: Maybe<UserWhereUniqueInput>;
+};
+
+
+export type UserFriendRequestRecievedArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<FriendsRequestWhereUniqueInput>;
+  after?: Maybe<FriendsRequestWhereUniqueInput>;
+};
+
+
+export type UserFriendRequsetSentArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<FriendsRequestWhereUniqueInput>;
+  after?: Maybe<FriendsRequestWhereUniqueInput>;
 };
 
 export type Query = {
   __typename?: 'Query';
   users: Array<User>;
+  messages: Array<Messages>;
+  friendsRequests: Array<FriendsRequest>;
   CurrentUser?: Maybe<User>;
+  /** All Messages from User */
+  GetMessages: Array<Messages>;
+  Friends?: Maybe<User>;
 };
 
 
@@ -34,9 +106,31 @@ export type QueryUsersArgs = {
   after?: Maybe<UserWhereUniqueInput>;
 };
 
+
+export type QueryMessagesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<MessagesWhereUniqueInput>;
+  after?: Maybe<MessagesWhereUniqueInput>;
+};
+
+
+export type QueryFriendsRequestsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<FriendsRequestWhereUniqueInput>;
+  after?: Maybe<FriendsRequestWhereUniqueInput>;
+};
+
+
+export type QueryGetMessagesArgs = {
+  from: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   deleteManyUser: BatchPayload;
+  deleteManyMessages: BatchPayload;
   /** Create New User */
   CreateUser: AuthPayload;
   PasswordLogin: AuthPayload;
@@ -44,11 +138,23 @@ export type Mutation = {
   ValidateOTP: AuthPayload;
   RequestResetPassword: Scalars['String'];
   ResetPassword: AuthPayload;
+  /** Send Chat Message */
+  SendMessage: Messages;
+  /** Log User in With Google */
+  GoogleAuth: AuthPayload;
+  SetUserInactive: Scalars['String'];
+  AddFriend: Scalars['String'];
+  ConfirmFriendRequest: Scalars['String'];
 };
 
 
 export type MutationDeleteManyUserArgs = {
   where?: Maybe<UserWhereInput>;
+};
+
+
+export type MutationDeleteManyMessagesArgs = {
+  where?: Maybe<MessagesWhereInput>;
 };
 
 
@@ -61,7 +167,7 @@ export type MutationCreateUserArgs = {
 
 export type MutationPasswordLoginArgs = {
   emailOrUsername: Scalars['String'];
-  password: Scalars['String'];
+  password?: Maybe<Scalars['String']>;
 };
 
 
@@ -87,17 +193,89 @@ export type MutationResetPasswordArgs = {
   ConfirmPassword: Scalars['String'];
 };
 
+
+export type MutationSendMessageArgs = {
+  Sender: Scalars['String'];
+  Receiver: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationGoogleAuthArgs = {
+  email?: Maybe<Scalars['String']>;
+  images?: Maybe<Scalars['String']>;
+  googleId?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationSetUserInactiveArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationAddFriendArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationConfirmFriendRequestArgs = {
+  id: Scalars['Int'];
+};
+
 export type AuthPayload = {
   __typename?: 'AuthPayload';
   token: Scalars['String'];
   user: User;
 };
 
+export type Messages = {
+  __typename?: 'Messages';
+  id: Scalars['Int'];
+  content?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+  from: User;
+  SenderId: Scalars['Int'];
+  to: User;
+  ReceiverId: Scalars['Int'];
+  isSenderFriend: Scalars['Boolean'];
+  isSenderFollowing: Scalars['Boolean'];
+  isSenderFollowedBy: Scalars['Boolean'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type FriendsRequest = {
+  __typename?: 'FriendsRequest';
+  id: Scalars['Int'];
+  RequestReceiverId: Scalars['Int'];
+  RequsetSenderId: Scalars['Int'];
+  sender: User;
+  reciever: User;
+  createdAt: Scalars['DateTime'];
+};
+
+export type FriendsPayload = {
+  __typename?: 'FriendsPayload';
+  user?: Maybe<User>;
+  message?: Maybe<Array<Messages>>;
+};
+
 export type UserWhereUniqueInput = {
   id?: Maybe<Scalars['Int']>;
   email?: Maybe<Scalars['String']>;
   username?: Maybe<Scalars['String']>;
+  googleId?: Maybe<Scalars['String']>;
 };
+
+export type MessagesWhereUniqueInput = {
+  id?: Maybe<Scalars['Int']>;
+};
+
+export type FriendsRequestWhereUniqueInput = {
+  id?: Maybe<Scalars['Int']>;
+};
+
 
 export type BatchPayload = {
   __typename?: 'BatchPayload';
@@ -111,12 +289,42 @@ export type UserWhereInput = {
   id?: Maybe<IntFilter>;
   email?: Maybe<StringFilter>;
   username?: Maybe<StringFilter>;
+  googleId?: Maybe<StringNullableFilter>;
   loginSecret?: Maybe<StringNullableFilter>;
   avatar?: Maybe<StringNullableFilter>;
-  password?: Maybe<StringFilter>;
+  password?: Maybe<StringNullableFilter>;
   OneTimePassword?: Maybe<IntNullableFilter>;
   PasswordResetTokenExpiry?: Maybe<FloatNullableFilter>;
   PasswordResetToken?: Maybe<StringNullableFilter>;
+  MessagesSent?: Maybe<MessagesListRelationFilter>;
+  MessagesRecieved?: Maybe<MessagesListRelationFilter>;
+  FriendRequsetSent?: Maybe<FriendsRequestListRelationFilter>;
+  FriendRequestRecieved?: Maybe<FriendsRequestListRelationFilter>;
+  followedBy?: Maybe<UserListRelationFilter>;
+  following?: Maybe<UserListRelationFilter>;
+  friends?: Maybe<UserListRelationFilter>;
+  friend?: Maybe<UserWhereInput>;
+  friendId?: Maybe<IntNullableFilter>;
+  isActive?: Maybe<BoolFilter>;
+  lastSeen?: Maybe<StringNullableFilter>;
+  createdAt?: Maybe<DateTimeFilter>;
+  updatedAt?: Maybe<DateTimeFilter>;
+};
+
+export type MessagesWhereInput = {
+  AND?: Maybe<Array<MessagesWhereInput>>;
+  OR?: Maybe<Array<MessagesWhereInput>>;
+  NOT?: Maybe<Array<MessagesWhereInput>>;
+  id?: Maybe<IntFilter>;
+  content?: Maybe<StringNullableFilter>;
+  image?: Maybe<StringNullableFilter>;
+  from?: Maybe<UserWhereInput>;
+  SenderId?: Maybe<IntFilter>;
+  to?: Maybe<UserWhereInput>;
+  ReceiverId?: Maybe<IntFilter>;
+  isSenderFriend?: Maybe<BoolFilter>;
+  isSenderFollowing?: Maybe<BoolFilter>;
+  isSenderFollowedBy?: Maybe<BoolFilter>;
   createdAt?: Maybe<DateTimeFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
 };
@@ -180,6 +388,29 @@ export type FloatNullableFilter = {
   gt?: Maybe<Scalars['Float']>;
   gte?: Maybe<Scalars['Float']>;
   not?: Maybe<NestedFloatNullableFilter>;
+};
+
+export type MessagesListRelationFilter = {
+  every?: Maybe<MessagesWhereInput>;
+  some?: Maybe<MessagesWhereInput>;
+  none?: Maybe<MessagesWhereInput>;
+};
+
+export type FriendsRequestListRelationFilter = {
+  every?: Maybe<FriendsRequestWhereInput>;
+  some?: Maybe<FriendsRequestWhereInput>;
+  none?: Maybe<FriendsRequestWhereInput>;
+};
+
+export type UserListRelationFilter = {
+  every?: Maybe<UserWhereInput>;
+  some?: Maybe<UserWhereInput>;
+  none?: Maybe<UserWhereInput>;
+};
+
+export type BoolFilter = {
+  equals?: Maybe<Scalars['Boolean']>;
+  not?: Maybe<NestedBoolFilter>;
 };
 
 export type DateTimeFilter = {
@@ -254,6 +485,23 @@ export type NestedFloatNullableFilter = {
   not?: Maybe<NestedFloatNullableFilter>;
 };
 
+export type FriendsRequestWhereInput = {
+  AND?: Maybe<Array<FriendsRequestWhereInput>>;
+  OR?: Maybe<Array<FriendsRequestWhereInput>>;
+  NOT?: Maybe<Array<FriendsRequestWhereInput>>;
+  id?: Maybe<IntFilter>;
+  sender?: Maybe<UserWhereInput>;
+  RequsetSenderId?: Maybe<IntFilter>;
+  reciever?: Maybe<UserWhereInput>;
+  RequestReceiverId?: Maybe<IntFilter>;
+  createdAt?: Maybe<DateTimeFilter>;
+  updatedAt?: Maybe<DateTimeFilter>;
+};
+
+export type NestedBoolFilter = {
+  equals?: Maybe<Scalars['Boolean']>;
+  not?: Maybe<NestedBoolFilter>;
+};
 
 export type NestedDateTimeFilter = {
   equals?: Maybe<Scalars['DateTime']>;
@@ -266,6 +514,38 @@ export type NestedDateTimeFilter = {
   not?: Maybe<NestedDateTimeFilter>;
 };
 
+export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UsersQuery = (
+  { __typename?: 'Query' }
+  & { users: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username' | 'email' | 'avatar' | 'isActive' | 'lastSeen'>
+  )> }
+);
+
+export type FriendsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FriendsQuery = (
+  { __typename?: 'Query' }
+  & { Friends?: Maybe<(
+    { __typename?: 'User' }
+    & { friends: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'email' | 'avatar' | 'isActive' | 'lastSeen'>
+      & { MessagesRecieved: Array<(
+        { __typename?: 'Messages' }
+        & Pick<Messages, 'content' | 'createdAt'>
+      )>, MessagesSent: Array<(
+        { __typename?: 'Messages' }
+        & Pick<Messages, 'content' | 'createdAt'>
+      )> }
+    )> }
+  )> }
+);
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -273,7 +553,7 @@ export type CurrentUserQuery = (
   { __typename?: 'Query' }
   & { CurrentUser?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'email' | 'avatar'>
+    & Pick<User, 'id' | 'username' | 'email' | 'avatar' | 'isActive' | 'lastSeen'>
   )> }
 );
 
@@ -298,7 +578,7 @@ export type CreateUserMutation = (
 
 export type PasswordLoginMutationVariables = Exact<{
   emailOrUsername: Scalars['String'];
-  password: Scalars['String'];
+  password?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -371,7 +651,146 @@ export type ResetPasswordMutation = (
   ) }
 );
 
+export type GoogleAuthMutationVariables = Exact<{
+  email: Scalars['String'];
+  images: Scalars['String'];
+  googleId?: Maybe<Scalars['String']>;
+}>;
 
+
+export type GoogleAuthMutation = (
+  { __typename?: 'Mutation' }
+  & { GoogleAuth: (
+    { __typename?: 'AuthPayload' }
+    & Pick<AuthPayload, 'token'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'email' | 'avatar' | 'username'>
+    ) }
+  ) }
+);
+
+export type GetMessagesQueryVariables = Exact<{
+  from: Scalars['String'];
+}>;
+
+
+export type GetMessagesQuery = (
+  { __typename?: 'Query' }
+  & { GetMessages: Array<(
+    { __typename?: 'Messages' }
+    & Pick<Messages, 'id' | 'content' | 'image' | 'isSenderFriend' | 'isSenderFollowing' | 'ReceiverId' | 'SenderId' | 'createdAt' | 'updatedAt'>
+    & { from: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'avatar'>
+    ), to: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'avatar'>
+    ) }
+  )> }
+);
+
+export type SendMessageMutationVariables = Exact<{
+  Sender: Scalars['String'];
+  Receiver: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+}>;
+
+
+export type SendMessageMutation = (
+  { __typename?: 'Mutation' }
+  & { SendMessage: (
+    { __typename?: 'Messages' }
+    & Pick<Messages, 'id' | 'content'>
+  ) }
+);
+
+
+export const UsersDocument = gql`
+    query Users {
+  users {
+    id
+    username
+    email
+    avatar
+    isActive
+    lastSeen
+  }
+}
+    `;
+
+/**
+ * __useUsersQuery__
+ *
+ * To run a query within a React component, call `useUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUsersQuery(baseOptions?: Apollo.QueryHookOptions<UsersQuery, UsersQueryVariables>) {
+        return Apollo.useQuery<UsersQuery, UsersQueryVariables>(UsersDocument, baseOptions);
+      }
+export function useUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UsersQuery, UsersQueryVariables>) {
+          return Apollo.useLazyQuery<UsersQuery, UsersQueryVariables>(UsersDocument, baseOptions);
+        }
+export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>;
+export type UsersLazyQueryHookResult = ReturnType<typeof useUsersLazyQuery>;
+export type UsersQueryResult = Apollo.QueryResult<UsersQuery, UsersQueryVariables>;
+export const FriendsDocument = gql`
+    query Friends {
+  Friends {
+    friends {
+      id
+      username
+      email
+      avatar
+      isActive
+      lastSeen
+      MessagesRecieved(last: 1) {
+        content
+        createdAt
+      }
+      MessagesSent(last: 1) {
+        content
+        createdAt
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useFriendsQuery__
+ *
+ * To run a query within a React component, call `useFriendsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFriendsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFriendsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFriendsQuery(baseOptions?: Apollo.QueryHookOptions<FriendsQuery, FriendsQueryVariables>) {
+        return Apollo.useQuery<FriendsQuery, FriendsQueryVariables>(FriendsDocument, baseOptions);
+      }
+export function useFriendsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FriendsQuery, FriendsQueryVariables>) {
+          return Apollo.useLazyQuery<FriendsQuery, FriendsQueryVariables>(FriendsDocument, baseOptions);
+        }
+export type FriendsQueryHookResult = ReturnType<typeof useFriendsQuery>;
+export type FriendsLazyQueryHookResult = ReturnType<typeof useFriendsLazyQuery>;
+export type FriendsQueryResult = Apollo.QueryResult<FriendsQuery, FriendsQueryVariables>;
 export const CurrentUserDocument = gql`
     query CurrentUser {
   CurrentUser {
@@ -379,6 +798,8 @@ export const CurrentUserDocument = gql`
     username
     email
     avatar
+    isActive
+    lastSeen
   }
 }
     `;
@@ -448,7 +869,7 @@ export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutati
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
 export const PasswordLoginDocument = gql`
-    mutation PasswordLogin($emailOrUsername: String!, $password: String!) {
+    mutation PasswordLogin($emailOrUsername: String!, $password: String) {
   PasswordLogin(emailOrUsername: $emailOrUsername, password: $password) {
     token
     user {
@@ -619,3 +1040,130 @@ export function useResetPasswordMutation(baseOptions?: Apollo.MutationHookOption
 export type ResetPasswordMutationHookResult = ReturnType<typeof useResetPasswordMutation>;
 export type ResetPasswordMutationResult = Apollo.MutationResult<ResetPasswordMutation>;
 export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPasswordMutation, ResetPasswordMutationVariables>;
+export const GoogleAuthDocument = gql`
+    mutation GoogleAuth($email: String!, $images: String!, $googleId: String) {
+  GoogleAuth(email: $email, images: $images, googleId: $googleId) {
+    token
+    user {
+      id
+      email
+      avatar
+      username
+    }
+  }
+}
+    `;
+export type GoogleAuthMutationFn = Apollo.MutationFunction<GoogleAuthMutation, GoogleAuthMutationVariables>;
+
+/**
+ * __useGoogleAuthMutation__
+ *
+ * To run a mutation, you first call `useGoogleAuthMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGoogleAuthMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [googleAuthMutation, { data, loading, error }] = useGoogleAuthMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      images: // value for 'images'
+ *      googleId: // value for 'googleId'
+ *   },
+ * });
+ */
+export function useGoogleAuthMutation(baseOptions?: Apollo.MutationHookOptions<GoogleAuthMutation, GoogleAuthMutationVariables>) {
+        return Apollo.useMutation<GoogleAuthMutation, GoogleAuthMutationVariables>(GoogleAuthDocument, baseOptions);
+      }
+export type GoogleAuthMutationHookResult = ReturnType<typeof useGoogleAuthMutation>;
+export type GoogleAuthMutationResult = Apollo.MutationResult<GoogleAuthMutation>;
+export type GoogleAuthMutationOptions = Apollo.BaseMutationOptions<GoogleAuthMutation, GoogleAuthMutationVariables>;
+export const GetMessagesDocument = gql`
+    query GetMessages($from: String!) {
+  GetMessages(from: $from) {
+    id
+    content
+    from {
+      id
+      username
+      avatar
+    }
+    to {
+      id
+      username
+      avatar
+    }
+    image
+    isSenderFriend
+    isSenderFollowing
+    ReceiverId
+    SenderId
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetMessagesQuery__
+ *
+ * To run a query within a React component, call `useGetMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMessagesQuery({
+ *   variables: {
+ *      from: // value for 'from'
+ *   },
+ * });
+ */
+export function useGetMessagesQuery(baseOptions?: Apollo.QueryHookOptions<GetMessagesQuery, GetMessagesQueryVariables>) {
+        return Apollo.useQuery<GetMessagesQuery, GetMessagesQueryVariables>(GetMessagesDocument, baseOptions);
+      }
+export function useGetMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMessagesQuery, GetMessagesQueryVariables>) {
+          return Apollo.useLazyQuery<GetMessagesQuery, GetMessagesQueryVariables>(GetMessagesDocument, baseOptions);
+        }
+export type GetMessagesQueryHookResult = ReturnType<typeof useGetMessagesQuery>;
+export type GetMessagesLazyQueryHookResult = ReturnType<typeof useGetMessagesLazyQuery>;
+export type GetMessagesQueryResult = Apollo.QueryResult<GetMessagesQuery, GetMessagesQueryVariables>;
+export const SendMessageDocument = gql`
+    mutation SendMessage($Sender: String!, $Receiver: String!, $content: String = "Empty Message", $image: String = "No Image to display") {
+  SendMessage(Sender: $Sender, Receiver: $Receiver, content: $content, image: $image) {
+    id
+    content
+  }
+}
+    `;
+export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation, SendMessageMutationVariables>;
+
+/**
+ * __useSendMessageMutation__
+ *
+ * To run a mutation, you first call `useSendMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendMessageMutation, { data, loading, error }] = useSendMessageMutation({
+ *   variables: {
+ *      Sender: // value for 'Sender'
+ *      Receiver: // value for 'Receiver'
+ *      content: // value for 'content'
+ *      image: // value for 'image'
+ *   },
+ * });
+ */
+export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendMessageMutation, SendMessageMutationVariables>) {
+        return Apollo.useMutation<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, baseOptions);
+      }
+export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
+export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
+export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;

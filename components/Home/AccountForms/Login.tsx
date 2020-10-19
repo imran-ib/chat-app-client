@@ -9,11 +9,12 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Alert from "react-bootstrap/Alert";
 import {
   usePasswordLoginMutation,
-  CurrentUserDocument,
+  useCurrentUserQuery,
 } from "generated/graphql";
 import OPTFormComponent from "./OTPForm";
 import { useAuthStore } from "components/Auth/Auth";
 import { useRouter } from "next/router";
+import GoogleAuth from "./GoogleAuth";
 
 type FormValues = {
   emailOrUsername: string;
@@ -21,14 +22,19 @@ type FormValues = {
 };
 
 const Login: React.FC<any> = () => {
-  const Router = useRouter();
   const dispatch = useAuthStore((state) => state.dispatch);
+  const {
+    data,
+    loading: UserLoading,
+    error: userError,
+    called,
+    refetch,
+  } = useCurrentUserQuery();
   const [PasswordLogin, { loading, error }] = usePasswordLoginMutation({
-    refetchQueries: [{ query: CurrentUserDocument }],
     onCompleted: (data) => {
       // @ts-ignore
       dispatch({ type: "Login", payload: data?.PasswordLogin });
-      Router.push("/user/chat");
+      if (data && !UserLoading && !userError && called) refetch();
     },
   });
   const { register, handleSubmit, errors } = useForm<FormValues>();
@@ -106,6 +112,8 @@ const Login: React.FC<any> = () => {
       </Form>
       {/* OPT Form */}
       <OPTFormComponent />
+      {/* Google Auth */}
+      <GoogleAuth />
     </LoginStyles>
   );
 };

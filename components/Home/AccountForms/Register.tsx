@@ -6,10 +6,10 @@ import React from "react";
 import styled from "styled-components";
 import { useStore } from "../HomeState";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useCreateUserMutation } from "generated/graphql";
+import { useCreateUserMutation, useCurrentUserQuery } from "generated/graphql";
 import Alert from "react-bootstrap/Alert";
 import { useAuthStore } from "components/Auth/Auth";
-import { useRouter } from "next/router";
+import GoogleAuth from "./GoogleAuth";
 
 type FormValues = {
   email: string;
@@ -21,13 +21,20 @@ type FormValues = {
 const Register = () => {
   const { register, handleSubmit, errors } = useForm<FormValues>();
   const state = useStore();
-  const Router = useRouter();
+
   const dispatch = useAuthStore((state) => state.dispatch);
+  const {
+    data,
+    loading: UserLoading,
+    error: userError,
+    called,
+    refetch,
+  } = useCurrentUserQuery();
   const [CreateUser, { loading, error }] = useCreateUserMutation({
     onCompleted: (data) => {
       // @ts-ignore
       dispatch({ type: "Login", payload: data?.CreateUser });
-      Router.push("/user/chat");
+      if (data && !UserLoading && !userError && called) refetch();
     },
   });
 
@@ -124,6 +131,7 @@ const Register = () => {
           <a onClick={() => state.setShowLogin()}>Login</a>{" "}
         </p>
       </Form>
+      <GoogleAuth />
     </RegisterStyles>
   );
 };

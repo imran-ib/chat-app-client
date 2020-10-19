@@ -8,8 +8,4 @@ const path = require("path");
 dotenvLoad();
 const nextConfig = {};
 
-module.exports = withPlugins(
-  [[optimizedImages]],
-
-  nextConfig
-);
+module.exports = withPlugins([[optimizedImages]], nextEnv(), nextConfig);

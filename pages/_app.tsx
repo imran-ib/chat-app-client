@@ -1,9 +1,12 @@
 import { AppProps } from "next/app";
 import { ApolloProvider } from "@apollo/react-hooks";
+import SimpleReactLightbox from "simple-react-lightbox";
+
 import withData from "../components/lib/withData";
-import { GlobalStyles } from "../components/styles/Global";
 //Style Sheets
 import "bootstrap/dist/css/bootstrap.min.css";
+import "emoji-mart/css/emoji-mart.css";
+
 interface MyProps extends AppProps {
   apollo: any;
 }
@@ -11,8 +14,9 @@ interface MyProps extends AppProps {
 function MyApp({ Component, pageProps, apollo }: MyProps) {
   return (
     <ApolloProvider client={apollo}>
-      <GlobalStyles />
-      <Component {...pageProps} />
+      <SimpleReactLightbox>
+        <Component {...pageProps} />
+      </SimpleReactLightbox>
     </ApolloProvider>
   );
 }

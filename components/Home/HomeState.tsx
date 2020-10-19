@@ -1,8 +1,8 @@
 import create from "zustand";
 
 export const useStore = create((set) => ({
-  Register: true,
-  Login: false,
+  Register: false,
+  Login: true,
   ForgotPassword: false,
   OTPInput: false,
   username: "",

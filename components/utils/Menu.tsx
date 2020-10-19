@@ -2,7 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 import Dropdown from "react-bootstrap/Dropdown";
 import { useAuthStore } from "components/Auth/Auth";
-import { useRouter } from "next/router";
+import { useCurrentUserQuery } from "generated/graphql";
 
 const DotMenuStyle = styled.div`
   .MenuStyles {
@@ -26,17 +26,21 @@ const DotsMenuIcon = styled.div`
   background-image: url("/images/menu.png");
   width: 3.2rem;
   height: 3.2rem;
-  position: absolute;
-  right: 3rem;
-  top: 3rem;
+
   cursor: pointer;
 `;
 
 const DotMenu = () => {
-  const Router = useRouter();
   const dispatch = useAuthStore((state) => state.dispatch);
+  const {
+    data,
+    loading: UserLoading,
+    error: userError,
+    called,
+    refetch,
+  } = useCurrentUserQuery();
   return (
-    <DotMenuStyle>
+    <DotMenuStyle className="ml-auto mb-5">
       <Dropdown>
         <Dropdown.Toggle
           as={DotsMenuIcon}
@@ -49,7 +53,7 @@ const DotMenu = () => {
             onClick={() => {
               //@ts-ignore
               dispatch({ type: "Logout", payload: {} });
-              Router.push("/");
+              if (data && !UserLoading && !userError && called) refetch();
             }}
           >
             Logout

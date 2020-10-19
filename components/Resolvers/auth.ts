@@ -1,5 +1,44 @@
 import gql from "graphql-tag";
 
+//REVIEW
+// Chats
+export const Users = gql`
+  query Users {
+    users {
+      id
+      username
+      email
+      avatar
+      isActive
+      lastSeen
+    }
+  }
+`;
+export const Friends = gql`
+  query Friends {
+  Friends {
+    friends {
+      id
+      username
+      email
+      avatar
+      isActive
+      lastSeen
+      MessagesRecieved(last:1){
+        content
+        createdAt
+      }
+      MessagesSent(last:1){
+        content
+        createdAt
+      }
+     
+    }
+  }
+}
+`;
+
+
 export const CurrentUser = gql`
   query CurrentUser {
     CurrentUser {
@@ -7,6 +46,8 @@ export const CurrentUser = gql`
       username
       email
       avatar
+      isActive
+      lastSeen
     }
   }
 `;
@@ -26,7 +67,7 @@ export const CreateUser = gql`
 `;
 
 export const PasswordLogin = gql`
-  mutation PasswordLogin($emailOrUsername: String!, $password: String!) {
+  mutation PasswordLogin($emailOrUsername: String!, $password: String) {
     PasswordLogin(emailOrUsername: $emailOrUsername, password: $password) {
       token
       user {
@@ -80,3 +121,23 @@ export const ResetPassword = gql`
     }
   }
 `;
+
+export const GoogleAuth = gql`
+  mutation GoogleAuth($email: String!, $images: String!, $googleId: String) {
+    GoogleAuth(email: $email, images: $images, googleId: $googleId) {
+      token
+      user {
+        id
+        email
+        avatar
+        username
+      }
+    }
+  }
+`;
+
+// export const SetUserInactive = gql`
+//   mutation SetUserInactive($Id: number) {
+//     SetUserInactive(id: $id)
+//   }
+// `;

@@ -29,7 +29,13 @@ const LoginShield: React.FC<any> = () => {
       Router.push("/user/chat");
     },
   });
-  const { refetch } = useCurrentUserQuery();
+  const {
+    data,
+    loading: UserLoading,
+    error: UserError,
+    called,
+    refetch,
+  } = useCurrentUserQuery();
   const { register, handleSubmit, errors } = useForm<FormValues>();
   const onSubmit: SubmitHandler<FormValues> = async ({
     emailOrUsername,
@@ -41,7 +47,7 @@ const LoginShield: React.FC<any> = () => {
         password,
       },
     }).then(() => {
-      refetch();
+      if (data && !UserLoading && !UserError && called) refetch();
     });
   };
 

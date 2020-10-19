@@ -42,6 +42,7 @@ export const GlobalStyles: GlobalStyleComponent<
 > = createGlobalStyle`
  ${reset}
  html { 
+  overflow: hidden;
   font-size: 10px;
   height: 100%;
 }
@@ -50,6 +51,23 @@ export const GlobalStyles: GlobalStyleComponent<
       overflow-x: hidden !important;
       background-color:#292F3F;
       color:#828282;
+      font-size: 1.6rem;
+      
+       /* Scroll bar */
+  &::-webkit-scrollbar {
+    width: 0.4em;
+  }
+
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+  }
+
+      
 
     }
     a{
@@ -75,7 +93,10 @@ export const GlobalStyles: GlobalStyleComponent<
   .b-green{
     border: 1px solid green;
   }
-  ;`;
+
+
+
+  `;
 
 export const customMedia = generateMedia({
   huge: "1440px",

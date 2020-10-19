@@ -6,7 +6,7 @@ import React from "react";
 import styled from "styled-components";
 import { useStore } from "../HomeState";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useVerifyOptMutation } from "generated/graphql";
+import { useVerifyOptMutation, useCurrentUserQuery } from "generated/graphql";
 import Alert from "react-bootstrap/Alert";
 import { useAuthStore } from "components/Auth/Auth";
 import { useRouter } from "next/router";
@@ -17,14 +17,20 @@ type FormValues = {
 };
 
 const OneTimePassword: React.FC<any> = () => {
-  const Router = useRouter();
   const dispatch = useAuthStore((state) => state.dispatch);
   const state = useStore();
+  const {
+    data,
+    loading: UserLoading,
+    error: userError,
+    called,
+    refetch,
+  } = useCurrentUserQuery();
   const [ValidateOTP, { loading, error }] = useVerifyOptMutation({
     onCompleted: (data) => {
       // @ts-ignore
       dispatch({ type: "Login", payload: data?.ValidateOTP });
-      Router.push("/user/chat");
+      if (data && !UserLoading && !userError && called) refetch();
     },
   });
   const { register, handleSubmit, errors } = useForm<FormValues>();
