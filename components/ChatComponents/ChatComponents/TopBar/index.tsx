@@ -1,5 +1,6 @@
 import React from "react";
 import { useConversationStore } from "components/ChatComponents/ChatState";
+import { User } from "generated/graphql";
 
 interface Props {
   ToggleOtherUser: boolean;
@@ -7,7 +8,8 @@ interface Props {
 }
 
 const TopBar: React.FC<Props> = ({ ToggleOtherUser, setToggleOtherUser }) => {
-  const user = useConversationStore((state) =>state.user);
+  const user: User | any = useConversationStore((state) => state.user);
+  if (!user) return <p></p>;
 
   return (
     <>

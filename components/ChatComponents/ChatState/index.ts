@@ -1,5 +1,6 @@
 import create from "zustand";
-import { devtools, redux, } from "zustand/middleware";
+import { devtools, redux } from "zustand/middleware";
+import { User, Messages } from "generated/graphql";
 
 export const useChatLeftSideStore = create((set) => ({
   Chats: true,
@@ -50,22 +51,47 @@ export const useChatLeftSideStore = create((set) => ({
     })),
 }));
 
+let initialState = {
+  user: null,
+  messages: [],
+  friends: [],
+};
 
+interface State {
+  user?: User;
+  messages: Messages[];
+  friends?: User[];
+}
 
-export const reducer = (state: any, action: any) => {
+export const reducer = (state: State, action: any) => {
   switch (action.type) {
     case "SET_USER":
       return {
         ...state,
         user: action.payload.user,
       };
-     default:
+    case "SET_MESSAGES":
+      return {
+        ...state,
+        messages: action.payload.messages,
+      };
+    case "NEW_MESSAGE":
+      return {
+        ...state,
+        messages: state.messages?.length && [
+          ...state.messages,
+          action.payload.newMessage,
+        ],
+      };
+    case "FRIENDS":
+      return {
+        ...state,
+        friends: action.payload.friends,
+      };
+    default:
       throw new Error(`Unknown Action Type: ${action.type}`);
   }
 };
-
-const initialState = null
-
 
 export const useConversationStore = create(
   // Connects store to devtools
@@ -73,6 +99,7 @@ export const useConversationStore = create(
   devtools(
     // Transforms our store into a redux action dispatcher ...
     // Adds a dispatch method to the store as well as to the api
+    //@ts-ignore
     redux(reducer, initialState)
   )
-)
+);

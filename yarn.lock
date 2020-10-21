@@ -1684,6 +1684,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/ws@^7.2.7":
+  version "7.2.7"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-7.2.7.tgz#362ad1a1d62721bdb725e72c8cccf357078cf5a3"
+  integrity sha512-UUFC/xxqFLP17hTva8/lVT0SybLUrfSD9c+iapKb0fEiC8uoDbA+xuZ3pAN603eW+bY8ebSMLm9jXdIPnD0ZgA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/zen-observable@^0.8.0":
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/@types/zen-observable/-/zen-observable-0.8.1.tgz#5668c0bce55a91f2b9566b1d8a4c0a8dbbc79764"
@@ -8657,7 +8664,7 @@ subscribe-event@^1.1.1:
   resolved "https://registry.yarnpkg.com/subscribe-event/-/subscribe-event-1.1.1.tgz#0d2f2c14c18e4de3e7d108b4dd56078b379d95c9"
   integrity sha512-ffuMVOFvhc+HSfW/Q9xSQJikswqnT7sd39EjAXi7gneZWg7XYwq/ee9rcn66ZxZEXOLXew0rJXA1GU1gH5/nzw==
 
-subscriptions-transport-ws@0.9.18:
+subscriptions-transport-ws@0.9.18, subscriptions-transport-ws@^0.9.18:
   version "0.9.18"
   resolved "https://registry.yarnpkg.com/subscriptions-transport-ws/-/subscriptions-transport-ws-0.9.18.tgz#bcf02320c911fbadb054f7f928e51c6041a37b97"
   integrity sha512-tztzcBTNoEbuErsVQpTN2xUNN/efAZXyCyL5m3x4t6SKrEiTL2N8SaKWBFWM4u56pL79ULif3zjyeq+oV+nOaA==
@@ -9440,6 +9447,11 @@ ws@^5.2.0:
   integrity sha512-jaHFD6PFv6UgoIVda6qZllptQsMlDEJkTQcybzzXDYM1XO9Y8em691FGMPmM46WGyLU4z9KMgQN+qrux/nhlHA==
   dependencies:
     async-limiter "~1.0.0"
+
+ws@^7.3.1:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.3.1.tgz#d0547bf67f7ce4f12a72dfe31262c68d7dc551c8"
+  integrity sha512-D3RuNkynyHmEJIpD2qrgVkc9DQ23OrN/moAwZX4L8DfvszsJxpjQuUq3LMx6HoYji9fbIOBY18XWBsAux1ZZUA==
 
 xtend@^4.0.0, xtend@~4.0.1:
   version "4.0.2"

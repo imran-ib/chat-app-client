@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import { useConversationStore } from "components/ChatComponents/ChatState";
-import styled from "styled-components";
 import { useSendMessageMutation } from "generated/graphql";
 import { useUser } from "components/Auth/Auth";
 import { useForm } from "react-hook-form";
@@ -28,7 +27,8 @@ const ChatInput = () => {
   const onSubmit = () => {
     getMessage({
       variables: {
-        Receiver: SentTo.username,
+        //@ts-ignore
+        Receiver: SentTo?.username,
         //@ts-ignore
         Sender: user?.username,
         content: message,
@@ -98,6 +98,7 @@ const ChatInput = () => {
     if (uploadedImage !== "") {
       getMessage({
         variables: {
+          //@ts-ignore
           Receiver: SentTo.username,
           //@ts-ignore
           Sender: user?.username,

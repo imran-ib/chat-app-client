@@ -1,11 +1,9 @@
 import React from "react";
 import { useConversationStore } from "components/ChatComponents/ChatState";
 import styled from "styled-components";
-import { useGetMessagesQuery } from "generated/graphql";
-import { ChatSpinner } from "components/utils/Spinners/ChatSidebarSpinners";
 import Moment from "react-moment";
 import { SRLWrapper } from "simple-react-lightbox";
-
+import { Messages, User } from "generated/graphql";
 const ConversationStyles = styled.div`
   height: 600px;
   overflow: auto;
@@ -26,17 +24,15 @@ const ConversationStyles = styled.div`
 `;
 
 const Conversation = () => {
-  const user = useConversationStore((state) => state.user);
+  // const [Messages, setMessages] = useState(null);
 
-  const { data, loading, error } = useGetMessagesQuery({
-    variables: {
-      from: user?.username,
-    },
-  });
+  const user: User | any = useConversationStore((state) => state.user);
+  const Messages: Messages | any = useConversationStore(
+    (state) => state.messages
+  );
+  if (!Messages || !Messages.length || !user)
+    return <h1>Please Select a contact To start Chating</h1>;
 
-  if (loading) return <ChatSpinner />;
-
-  console.log("Conversation -> data", data);
   return (
     <ConversationStyles
       className="chat-conversation p-3 p-lg-4"
@@ -46,9 +42,8 @@ const Conversation = () => {
         <li>
           <div className="chat-day-title"></div>
         </li>
-
-        {data?.GetMessages.map((chat) => (
-          <div key={chat.id}>
+        {Messages?.map((chat: any, i: number) => (
+          <div key={i}>
             <li className={user?.id === chat.SenderId ? "" : "right"}>
               <div className="conversation-list">
                 <div className="chat-avatar">
@@ -59,7 +54,7 @@ const Conversation = () => {
                           //@ts-ignore */}
                   {chat.SenderId !== user.id && (
                     // @ts-ignore
-                    <img src={chat.from.avatar} alt="" />
+                    <img src={chat.from?.avatar} alt="" />
                   )}
                 </div>
 
@@ -107,7 +102,7 @@ const Conversation = () => {
                     </div>
                   </div>
                   <div className="conversation-name">
-                    {user?.id === chat.SenderId && chat.from.username}
+                    {user?.id === chat.SenderId && chat.from?.username}
                   </div>
                 </div>
               </div>
@@ -124,7 +119,7 @@ const Conversation = () => {
                           //@ts-ignore */}
                     {chat.SenderId !== user.id && (
                       // @ts-ignore
-                      <img src={chat.from.avatar} alt="" />
+                      <img src={chat.from?.avatar} alt="" />
                     )}
                   </div>
                   <div className="user-chat-content">
@@ -136,7 +131,7 @@ const Conversation = () => {
                               <SRLWrapper>
                                 <img
                                   src={chat.image}
-                                  alt="chat.from.username"
+                                  alt={chat.from.username}
                                   className="rounded border"
                                 />
                               </SRLWrapper>
@@ -185,7 +180,7 @@ const Conversation = () => {
                     </div>
 
                     <div className="conversation-name">
-                      {user?.id === chat.SenderId && chat.from.username}
+                      {user?.id === chat.SenderId && chat.from?.username}
                     </div>
                   </div>
                 </div>
@@ -193,6 +188,7 @@ const Conversation = () => {
             )}
           </div>
         ))}
+
         {/* <li className="right">
           <div className="conversation-list">
             <div className="chat-avatar">

@@ -1,24 +1,44 @@
 import React from "react";
 import styled from "styled-components";
-import { useFriendsQuery } from "generated/graphql";
-import {ChatSidebarSpinner} from "components/utils/Spinners/ChatSidebarSpinners";
+import {
+  useFriendsQuery,
+  useGetMessagesLazyQuery,
+  User,
+} from "generated/graphql";
+import { ChatSidebarSpinner } from "components/utils/Spinners/ChatSidebarSpinners";
 import { useConversationStore } from "components/ChatComponents/ChatState";
-import Moment from 'react-moment';
+import Moment from "react-moment";
 import { useUser } from "components/Auth/Auth";
 
-
-
 const Chats = () => {
-const dispatch = useConversationStore((state) => state.dispatch);
-const user = useUser()
-   const { data, loading, error ,called} = useFriendsQuery();
-  const friends = data?.Friends?.friends;
-//@ts-ignore
-  const users = friends?.filter((u) =>u.id !== user.id)  
+  const dispatch = useConversationStore((state) => state.dispatch);
+  const user: User | any = useUser();
+  const { data: Friends, loading } = useFriendsQuery({
+    onCompleted: (data) => {
+      //@ts-ignore
+      dispatch({
+        type: "FRIENDS",
+        payload: { friends: data.Friends?.friends },
+      });
+    },
+  });
+
+  const [GetMessages] = useGetMessagesLazyQuery({
+    onCompleted: (data) => {
+      //@ts-ignore
+      dispatch({
+        type: "SET_MESSAGES",
+        payload: { messages: data.GetMessages },
+      });
+    },
+  });
+
+  const friends = Friends?.Friends?.friends;
+
+  //@ts-ignore
+  const users = friends?.filter((u) => u.id !== user.id);
   if (loading) return <ChatSidebarSpinner />;
-  if( users?.length && !loading && !error && called )dispatch({type:"SET_USER", payload: users[0]})
-    
-  
+
   return (
     <div
       className="tab-pane fade show active"
@@ -59,13 +79,15 @@ const user = useUser()
 
           <div className="chat-message-list" data-simplebar>
             <ul className="list-unstyled chat-list chat-user-list">
-          
               {users?.map((user) => (
-                <li 
-                onClick={() =>{
-                  //@ts-ignore
-                  dispatch({type:"SET_USER" , payload: {user}})
-                }} key={user.id}>
+                <li
+                  onClick={() => {
+                    GetMessages({ variables: { from: user.username } });
+                    //@ts-ignore
+                    dispatch({ type: "SET_USER", payload: { user } });
+                  }}
+                  key={user.id}
+                >
                   <a href="#">
                     <div className="media">
                       <div className="chat-user-img online align-self-center mr-3">
@@ -83,23 +105,37 @@ const user = useUser()
                           {user.username}
                         </h5>
                         <p className="chat-user-message text-truncate mb-0">
-                          {user.MessagesRecieved.length ? user.MessagesRecieved[0].content?.substring(0 ,15) :""  }
-                          {user.MessagesSent.length ? user.MessagesSent[0].content?.substring(0 ,15) :"" }
-                          {!user.MessagesRecieved.length && !user.MessagesSent.length && "Hey! there I'm available"}
+                          {user.MessagesRecieved.length
+                            ? user.MessagesRecieved[0].content?.substring(0, 15)
+                            : ""}
+                          {user.MessagesSent.length
+                            ? user.MessagesSent[0].content?.substring(0, 15)
+                            : ""}
+                          {!user.MessagesRecieved.length &&
+                            !user.MessagesSent.length &&
+                            "Hey! there I'm available"}
                         </p>
                       </div>
                       <div className="font-size-11">
-                        {user.MessagesRecieved.length && user.MessagesRecieved[0]?.createdAt > user.MessagesSent[0]?.createdAt  ? 
-                        (<Moment date={user.MessagesRecieved[0]?.createdAt}  fromNow  />  ) :
-                         (<Moment date={user.MessagesSent[0]?.createdAt}  fromNow  />  )
-                         }
-                        
+                        {user.MessagesRecieved.length &&
+                        user.MessagesRecieved[0]?.createdAt >
+                          user.MessagesSent[0]?.createdAt ? (
+                          <Moment
+                            date={user.MessagesRecieved[0]?.createdAt}
+                            fromNow
+                          />
+                        ) : (
+                          <Moment
+                            date={user.MessagesSent[0]?.createdAt}
+                            fromNow
+                          />
+                        )}
                       </div>
                     </div>
                   </a>
                 </li>
               ))}
-{/* 
+              {/* 
               <li className="unread">
                 <a href="#">
                   <div className="media">
