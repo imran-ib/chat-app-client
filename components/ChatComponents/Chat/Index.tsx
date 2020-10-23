@@ -1,7 +1,11 @@
 import React, { useEffect } from "react";
 import SideBarComponent from "../Sidebarcomponents";
 import ChatComponents from "../ChatComponents";
-import { useNewMessageSubscription, Messages } from "generated/graphql";
+import {
+  useNewMessageSubscription,
+  Messages,
+  useReactionToMessageSubscription,
+} from "generated/graphql";
 import { useConversationStore } from "components/ChatComponents/ChatState";
 
 const Chat = () => {
@@ -9,6 +13,20 @@ const Chat = () => {
   //@ts-ignore
   const Messages: Messages[] = useConversationStore((state) => state.messages);
   const { data, loading } = useNewMessageSubscription();
+  const {
+    data: ReactData,
+    loading: ReactLoading,
+  } = useReactionToMessageSubscription();
+
+  useEffect(() => {
+    !ReactLoading &&
+      ReactData &&
+      //@ts-ignore
+      dispatch({
+        type: "ADD_REACTION",
+        payload: { Reaction: ReactData?.ReactionToMessage },
+      });
+  }, [ReactData]);
 
   useEffect(() => {
     !loading &&

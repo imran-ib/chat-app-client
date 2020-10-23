@@ -15,6 +15,12 @@ export const GetMessages = gql`
         username
         avatar
       }
+      reactions {
+        content
+        userId
+        messageId
+        createdAt
+      }
       image
       isSenderFriend
       isSenderFollowing
@@ -60,6 +66,13 @@ export const NewMessage = gql`
         username
         avatar
       }
+      reactions {
+        id
+        content
+        userId
+        messageId
+        createdAt
+      }
       image
       isSenderFriend
       isSenderFollowing
@@ -67,6 +80,28 @@ export const NewMessage = gql`
       SenderId
       createdAt
       updatedAt
+    }
+  }
+`;
+
+export const Reaction = gql`
+  mutation Reaction($messageId: Int!, $content: String!) {
+    CreateReaction(messageId: $messageId, content: $content) {
+      id
+      createdAt
+      content
+    }
+  }
+`;
+
+export const ReactionToMessage = gql`
+  subscription ReactionToMessage {
+    ReactionToMessage {
+      id
+      content
+      userId
+      messageId
+      createdAt
     }
   }
 `;

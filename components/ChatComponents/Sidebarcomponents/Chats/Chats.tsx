@@ -24,6 +24,7 @@ const Chats = () => {
   });
 
   const [GetMessages] = useGetMessagesLazyQuery({
+    
     onCompleted: (data) => {
       //@ts-ignore
       dispatch({
@@ -81,8 +82,11 @@ const Chats = () => {
             <ul className="list-unstyled chat-list chat-user-list">
               {users?.map((user) => (
                 <li
-                  onClick={() => {
-                    GetMessages({ variables: { from: user.username } });
+                  onClick={async () => {
+                    GetMessages({
+                      variables: { from: user.username },
+                    });
+
                     //@ts-ignore
                     dispatch({ type: "SET_USER", payload: { user } });
                   }}

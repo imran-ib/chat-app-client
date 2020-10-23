@@ -27,6 +27,7 @@ export type User = {
   lastSeen?: Maybe<Scalars['String']>;
   FriendRequestRecieved: Array<FriendsRequest>;
   FriendRequsetSent: Array<FriendsRequest>;
+  reactions: Array<Reaction>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
 };
@@ -87,6 +88,14 @@ export type UserFriendRequsetSentArgs = {
   after?: Maybe<FriendsRequestWhereUniqueInput>;
 };
 
+
+export type UserReactionsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<ReactionWhereUniqueInput>;
+  after?: Maybe<ReactionWhereUniqueInput>;
+};
+
 export type Query = {
   __typename?: 'Query';
   users: Array<User>;
@@ -145,6 +154,8 @@ export type Mutation = {
   SetUserInactive: Scalars['String'];
   AddFriend: Scalars['String'];
   ConfirmFriendRequest: Scalars['String'];
+  /** React To Message */
+  CreateReaction: Reaction;
 };
 
 
@@ -223,6 +234,12 @@ export type MutationConfirmFriendRequestArgs = {
   id: Scalars['Int'];
 };
 
+
+export type MutationCreateReactionArgs = {
+  messageId: Scalars['Int'];
+  content: Scalars['String'];
+};
+
 export type AuthPayload = {
   __typename?: 'AuthPayload';
   token: Scalars['String'];
@@ -241,8 +258,17 @@ export type Messages = {
   isSenderFriend: Scalars['Boolean'];
   isSenderFollowing: Scalars['Boolean'];
   isSenderFollowedBy: Scalars['Boolean'];
+  reactions: Array<Reaction>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+};
+
+
+export type MessagesReactionsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<ReactionWhereUniqueInput>;
+  after?: Maybe<ReactionWhereUniqueInput>;
 };
 
 export type FriendsRequest = {
@@ -253,6 +279,18 @@ export type FriendsRequest = {
   sender: User;
   reciever: User;
   createdAt: Scalars['DateTime'];
+};
+
+export type Reaction = {
+  __typename?: 'Reaction';
+  id: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
+  content: Scalars['String'];
+  message: Messages;
+  messageId: Scalars['Int'];
+  user: User;
+  userId: Scalars['Int'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type FriendsPayload = {
@@ -273,6 +311,10 @@ export type MessagesWhereUniqueInput = {
 };
 
 export type FriendsRequestWhereUniqueInput = {
+  id?: Maybe<Scalars['Int']>;
+};
+
+export type ReactionWhereUniqueInput = {
   id?: Maybe<Scalars['Int']>;
 };
 
@@ -307,6 +349,7 @@ export type UserWhereInput = {
   friendId?: Maybe<IntNullableFilter>;
   isActive?: Maybe<BoolFilter>;
   lastSeen?: Maybe<StringNullableFilter>;
+  reactions?: Maybe<ReactionListRelationFilter>;
   createdAt?: Maybe<DateTimeFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
 };
@@ -325,6 +368,7 @@ export type MessagesWhereInput = {
   isSenderFriend?: Maybe<BoolFilter>;
   isSenderFollowing?: Maybe<BoolFilter>;
   isSenderFollowedBy?: Maybe<BoolFilter>;
+  reactions?: Maybe<ReactionListRelationFilter>;
   createdAt?: Maybe<DateTimeFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
 };
@@ -411,6 +455,12 @@ export type UserListRelationFilter = {
 export type BoolFilter = {
   equals?: Maybe<Scalars['Boolean']>;
   not?: Maybe<NestedBoolFilter>;
+};
+
+export type ReactionListRelationFilter = {
+  every?: Maybe<ReactionWhereInput>;
+  some?: Maybe<ReactionWhereInput>;
+  none?: Maybe<ReactionWhereInput>;
 };
 
 export type DateTimeFilter = {
@@ -503,6 +553,20 @@ export type NestedBoolFilter = {
   not?: Maybe<NestedBoolFilter>;
 };
 
+export type ReactionWhereInput = {
+  AND?: Maybe<Array<ReactionWhereInput>>;
+  OR?: Maybe<Array<ReactionWhereInput>>;
+  NOT?: Maybe<Array<ReactionWhereInput>>;
+  id?: Maybe<IntFilter>;
+  user?: Maybe<UserWhereInput>;
+  userId?: Maybe<IntFilter>;
+  message?: Maybe<MessagesWhereInput>;
+  messageId?: Maybe<IntFilter>;
+  content?: Maybe<StringFilter>;
+  createdAt?: Maybe<DateTimeFilter>;
+  updatedAt?: Maybe<DateTimeFilter>;
+};
+
 export type NestedDateTimeFilter = {
   equals?: Maybe<Scalars['DateTime']>;
   in?: Maybe<Array<Scalars['DateTime']>>;
@@ -517,6 +581,7 @@ export type NestedDateTimeFilter = {
 export type Subscription = {
   __typename?: 'Subscription';
   NewMessage: Messages;
+  ReactionToMessage: Reaction;
 };
 
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
@@ -691,7 +756,10 @@ export type GetMessagesQuery = (
     ), to: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username' | 'avatar'>
-    ) }
+    ), reactions: Array<(
+      { __typename?: 'Reaction' }
+      & Pick<Reaction, 'content' | 'userId' | 'messageId' | 'createdAt'>
+    )> }
   )> }
 );
 
@@ -725,7 +793,35 @@ export type NewMessageSubscription = (
     ), to: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username' | 'avatar'>
-    ) }
+    ), reactions: Array<(
+      { __typename?: 'Reaction' }
+      & Pick<Reaction, 'id' | 'content' | 'userId' | 'messageId' | 'createdAt'>
+    )> }
+  ) }
+);
+
+export type ReactionMutationVariables = Exact<{
+  messageId: Scalars['Int'];
+  content: Scalars['String'];
+}>;
+
+
+export type ReactionMutation = (
+  { __typename?: 'Mutation' }
+  & { CreateReaction: (
+    { __typename?: 'Reaction' }
+    & Pick<Reaction, 'id' | 'createdAt' | 'content'>
+  ) }
+);
+
+export type ReactionToMessageSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ReactionToMessageSubscription = (
+  { __typename?: 'Subscription' }
+  & { ReactionToMessage: (
+    { __typename?: 'Reaction' }
+    & Pick<Reaction, 'id' | 'content' | 'userId' | 'messageId' | 'createdAt'>
   ) }
 );
 
@@ -1118,6 +1214,12 @@ export const GetMessagesDocument = gql`
       username
       avatar
     }
+    reactions {
+      content
+      userId
+      messageId
+      createdAt
+    }
     image
     isSenderFriend
     isSenderFollowing
@@ -1205,6 +1307,13 @@ export const NewMessageDocument = gql`
       username
       avatar
     }
+    reactions {
+      id
+      content
+      userId
+      messageId
+      createdAt
+    }
     image
     isSenderFriend
     isSenderFollowing
@@ -1236,3 +1345,70 @@ export function useNewMessageSubscription(baseOptions?: Apollo.SubscriptionHookO
       }
 export type NewMessageSubscriptionHookResult = ReturnType<typeof useNewMessageSubscription>;
 export type NewMessageSubscriptionResult = Apollo.SubscriptionResult<NewMessageSubscription>;
+export const ReactionDocument = gql`
+    mutation Reaction($messageId: Int!, $content: String!) {
+  CreateReaction(messageId: $messageId, content: $content) {
+    id
+    createdAt
+    content
+  }
+}
+    `;
+export type ReactionMutationFn = Apollo.MutationFunction<ReactionMutation, ReactionMutationVariables>;
+
+/**
+ * __useReactionMutation__
+ *
+ * To run a mutation, you first call `useReactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reactionMutation, { data, loading, error }] = useReactionMutation({
+ *   variables: {
+ *      messageId: // value for 'messageId'
+ *      content: // value for 'content'
+ *   },
+ * });
+ */
+export function useReactionMutation(baseOptions?: Apollo.MutationHookOptions<ReactionMutation, ReactionMutationVariables>) {
+        return Apollo.useMutation<ReactionMutation, ReactionMutationVariables>(ReactionDocument, baseOptions);
+      }
+export type ReactionMutationHookResult = ReturnType<typeof useReactionMutation>;
+export type ReactionMutationResult = Apollo.MutationResult<ReactionMutation>;
+export type ReactionMutationOptions = Apollo.BaseMutationOptions<ReactionMutation, ReactionMutationVariables>;
+export const ReactionToMessageDocument = gql`
+    subscription ReactionToMessage {
+  ReactionToMessage {
+    id
+    content
+    userId
+    messageId
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useReactionToMessageSubscription__
+ *
+ * To run a query within a React component, call `useReactionToMessageSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useReactionToMessageSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useReactionToMessageSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useReactionToMessageSubscription(baseOptions?: Apollo.SubscriptionHookOptions<ReactionToMessageSubscription, ReactionToMessageSubscriptionVariables>) {
+        return Apollo.useSubscription<ReactionToMessageSubscription, ReactionToMessageSubscriptionVariables>(ReactionToMessageDocument, baseOptions);
+      }
+export type ReactionToMessageSubscriptionHookResult = ReturnType<typeof useReactionToMessageSubscription>;
+export type ReactionToMessageSubscriptionResult = Apollo.SubscriptionResult<ReactionToMessageSubscription>;

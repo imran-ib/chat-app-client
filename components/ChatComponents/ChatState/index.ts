@@ -88,6 +88,30 @@ export const reducer = (state: State, action: any) => {
         ...state,
         friends: action.payload.friends,
       };
+
+    case "ADD_REACTION":
+      let MessagesCopy = [...state.messages];
+      let ReactedMessageIndex = MessagesCopy.findIndex(
+        (msg) => msg.id === action.payload.Reaction.messageId
+      );
+      let MessageCopy;
+      let ReactionCopy;
+      let NewReaction;
+      if (ReactedMessageIndex > -1) {
+        MessageCopy = { ...MessagesCopy[ReactedMessageIndex] };
+        ReactionCopy = [...MessagesCopy[ReactedMessageIndex]?.reactions];
+        NewReaction = action.payload.Reaction;
+
+        MessagesCopy[ReactedMessageIndex] = {
+          ...MessageCopy,
+          reactions: [...ReactionCopy, NewReaction],
+        };
+      }
+      return {
+        ...state,
+        messages: [...MessagesCopy],
+      };
+
     default:
       throw new Error(`Unknown Action Type: ${action.type}`);
   }
