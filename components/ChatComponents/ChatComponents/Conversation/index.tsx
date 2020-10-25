@@ -32,8 +32,7 @@ const Conversation = () => {
   const Messages: Messages | any = useConversationStore(
     (state) => state.messages
   );
-  if (!Messages || !Messages.length || !user)
-    return <h1>Please Select a contact To start Chating</h1>;
+  if (!Messages || !Messages.length || !user) return <p></p>;
 
   return (
     <ConversationStyles
@@ -46,88 +45,90 @@ const Conversation = () => {
         </li>
         {Messages?.map((chat: any, i: number) => (
           <div key={i}>
-            <li className={user?.id === chat.SenderId ? "" : "right"}>
-              <div className="conversation-list">
-                <div className="chat-avatar">
-                  {chat.SenderId === user.id && (
-                    <img src={user?.avatar} alt="" />
-                  )}
-                  {/* 
+            {!chat.image && (
+              <li className={user?.id === chat.SenderId ? "" : "right"}>
+                <div className="conversation-list">
+                  <div className="chat-avatar">
+                    {chat.SenderId === user.id && (
+                      <img src={user?.avatar} alt="" />
+                    )}
+                    {/* 
                           //@ts-ignore */}
-                  {chat.SenderId !== user.id && (
-                    // @ts-ignore
-                    <img src={chat.from?.avatar} alt="" />
-                  )}
-                </div>
+                    {chat.SenderId !== user.id && (
+                      // @ts-ignore
+                      <img src={chat.from?.avatar} alt="" />
+                    )}
+                  </div>
 
-                <div className="user-chat-content postilion-relative">
-                  <div className="ctext-wrap">
-                    <div className="ctext-wrap-content">
-                      <p className="mb-0">{chat.content}</p>
-                      <p className="chat-time mb-0">
-                        <i className="ri-time-line align-middle"></i>
-                        <span className="align-middle">
-                          {" "}
-                          <Moment date={chat.createdAt} fromNow />{" "}
-                        </span>
-                      </p>
-                    </div>
-                    {chat.reactions?.length &&
-                      chat.reactions?.map((reaction: any, i: number) => (
-                        <i
-                          key={i}
-                          style={{
-                            position: "absolute",
-                            fontSize: "1.5rem",
-                            top: "6.2rem",
-                            left: "12.8rem",
-                          }}
-                        >
-                          {[
-                            ...new Set(
-                              chat.reactions?.map((r: any) => r.content)
-                            ),
-                          ]}
-                          <span className="text-white">
+                  <div className="user-chat-content postilion-relative">
+                    <div className="ctext-wrap">
+                      <div className="ctext-wrap-content">
+                        <p className="mb-0">{chat.content}</p>
+                        <p className="chat-time mb-0">
+                          <i className="ri-time-line align-middle"></i>
+                          <span className="align-middle">
                             {" "}
-                            {chat.reactions.length > 0 && chat.reactions.length}
+                            <Moment date={chat.createdAt} fromNow />{" "}
                           </span>
-                        </i>
-                      ))}
-                    <div className="dropdown align-self-start">
-                      <div className="d-flex flex-column justify-content-between align-items-center">
-                        <a>
-                          <i className="ri-more-2-fill"></i>
-                        </a>
-                        <ReactButton MessageId={chat.id} />
+                        </p>
                       </div>
+                      {chat.reactions?.length &&
+                        chat.reactions?.map((reaction: any, i: number) => (
+                          <i
+                            key={i}
+                            style={{
+                              position: "absolute",
+                              fontSize: "1.5rem",
+                              bottom: "1.2rem",
+                              right: "4.5rem",
+                            }}
+                          >
+                            {[
+                              ...new Set(
+                                chat.reactions?.map((r: any) => r.content)
+                              ),
+                            ]}
+                            <span className="text-white">
+                              {" "}
+                              {chat.reactions.length && chat.reactions.length}
+                            </span>
+                          </i>
+                        ))}
+                      <div className="dropdown align-self-start">
+                        <div className="d-flex flex-column justify-content-between align-items-center">
+                          <a>
+                            <i className="ri-more-2-fill"></i>
+                          </a>
+                          <ReactButton MessageId={chat.id} />
+                        </div>
 
-                      <div className="dropdown-menu">
-                        <a className="dropdown-item" href="#">
-                          Copy
-                          <i className="ri-file-copy-line float-right text-muted"></i>
-                        </a>
-                        <a className="dropdown-item" href="#">
-                          Save
-                          <i className="ri-save-line float-right text-muted"></i>
-                        </a>
-                        <a className="dropdown-item" href="#">
-                          Forward
-                          <i className="ri-chat-forward-line float-right text-muted"></i>
-                        </a>
-                        <a className="dropdown-item" href="#">
-                          Delete
-                          <i className="ri-delete-bin-line float-right text-muted"></i>
-                        </a>
+                        <div className="dropdown-menu">
+                          <a className="dropdown-item" href="#">
+                            Copy
+                            <i className="ri-file-copy-line float-right text-muted"></i>
+                          </a>
+                          <a className="dropdown-item" href="#">
+                            Save
+                            <i className="ri-save-line float-right text-muted"></i>
+                          </a>
+                          <a className="dropdown-item" href="#">
+                            Forward
+                            <i className="ri-chat-forward-line float-right text-muted"></i>
+                          </a>
+                          <a className="dropdown-item" href="#">
+                            Delete
+                            <i className="ri-delete-bin-line float-right text-muted"></i>
+                          </a>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="conversation-name">
-                    {user?.id === chat.SenderId && chat.from?.username}
+                    <div className="conversation-name">
+                      {user?.id === chat.SenderId && chat.from?.username}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </li>
+              </li>
+            )}
             {/* image */}
             {chat.image && (
               <li className={user?.id === chat.SenderId ? "" : "right"}>
@@ -157,6 +158,33 @@ const Conversation = () => {
                                 />
                               </SRLWrapper>
                             </div>
+                            {chat.reactions?.length &&
+                              chat.reactions?.map(
+                                (reaction: any, i: number) => (
+                                  <i
+                                    key={i}
+                                    style={{
+                                      position: "absolute",
+                                      fontSize: "2.5rem",
+                                      bottom: "0.2rem",
+                                      right: "-4rem",
+                                    }}
+                                  >
+                                    {[
+                                      ...new Set(
+                                        chat.reactions?.map(
+                                          (r: any) => r.content
+                                        )
+                                      ),
+                                    ]}
+                                    <span className="text-white">
+                                      {" "}
+                                      {chat.reactions.length >= 1 &&
+                                        chat.reactions.length}
+                                    </span>
+                                  </i>
+                                )
+                              )}
                           </li>
                         </ul>
                         <p className="chat-time mb-0">
@@ -169,16 +197,13 @@ const Conversation = () => {
                       </div>
 
                       <div className="dropdown align-self-start">
-                        <a
-                          className="dropdown-toggle"
-                          href="#"
-                          role="button"
-                          data-toggle="dropdown"
-                          aria-haspopup="true"
-                          aria-expanded="false"
-                        >
-                          <i className="ri-more-2-fill"></i>
-                        </a>
+                        <div className="d-flex flex-column justify-content-between align-items-center">
+                          <a>
+                            <i className="ri-more-2-fill"></i>
+                          </a>
+                          <ReactButton MessageId={chat.id} />
+                        </div>
+
                         <div className="dropdown-menu">
                           <a className="dropdown-item" href="#">
                             Copy

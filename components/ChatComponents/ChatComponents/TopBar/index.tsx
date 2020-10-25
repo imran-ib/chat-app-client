@@ -1,6 +1,9 @@
 import React from "react";
 import { useConversationStore } from "components/ChatComponents/ChatState";
 import { User } from "generated/graphql";
+import { useUser } from "components/Auth/Auth";
+import AddFriend from "./AddFriendButton/AddFriend";
+import FriendRequest from "./FriendRequest/FriendRequest";
 
 interface Props {
   ToggleOtherUser: boolean;
@@ -8,8 +11,12 @@ interface Props {
 }
 
 const TopBar: React.FC<Props> = ({ ToggleOtherUser, setToggleOtherUser }) => {
-  const user: User | any = useConversationStore((state) => state.user);
-  if (!user) return <p></p>;
+  const CurrentUser = useUser();
+  let user: User | any = useConversationStore((state) => state.user);
+
+  if (!user) {
+    user = CurrentUser;
+  }
 
   return (
     <>
@@ -40,46 +47,25 @@ const TopBar: React.FC<Props> = ({ ToggleOtherUser, setToggleOtherUser }) => {
       {/*  */}
 
       <div className="col-sm-8 col-4">
-        <ul className="list-inline user-chat-nav text-right mb-0">
+        <ul className="list-inline user-chat-nav text-right d-flex justify-content-end align-items-center ">
           <li className="list-inline-item">
-            <div className="dropdown">
-              <button
-                className="btn nav-btn dropdown-toggle"
-                type="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <i className="ri-search-line"></i>
-              </button>
-              <div className="dropdown-menu p-0 dropdown-menu-right dropdown-menu-md">
-                <div className="search-box p-2">
-                  <input
-                    type="text"
-                    className="form-control bg-light border-0"
-                    placeholder="Search.."
-                  />
-                </div>
-              </div>
-            </div>
+            <FriendRequest />
           </li>
 
           <li className="list-inline-item d-none d-lg-inline-block">
-            <button type="button" className="btn nav-btn user-profile-show">
-              <i className="ri-user-2-line"></i>
-            </button>
+            <AddFriend />
           </li>
 
           <li className="list-inline-item">
             <div className="dropdown">
               <button
-                className="btn nav-btn dropdown-toggle"
+                className="btn nav-btn "
                 type="button"
                 data-toggle="dropdown"
                 aria-haspopup="true"
                 aria-expanded="true"
               >
-                <i className="ri-more-fill"></i>
+                <i className="ri-more-fill mt-2"></i>
               </button>
               <div className="dropdown-menu dropdown-menu-right">
                 <a

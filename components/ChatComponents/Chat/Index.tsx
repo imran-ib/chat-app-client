@@ -5,8 +5,10 @@ import {
   useNewMessageSubscription,
   Messages,
   useReactionToMessageSubscription,
+  useFriendRequestSubSubscription,
 } from "generated/graphql";
 import { useConversationStore } from "components/ChatComponents/ChatState";
+import { toast } from "react-toastify";
 
 const Chat = () => {
   const dispatch = useConversationStore((state) => state.dispatch);
@@ -17,6 +19,23 @@ const Chat = () => {
     data: ReactData,
     loading: ReactLoading,
   } = useReactionToMessageSubscription();
+  const {
+    data: ReqData,
+    loading: ReqLoading,
+  } = useFriendRequestSubSubscription({
+    onSubscriptionData: () => {
+      toast.info("New Friend Request");
+    },
+  });
+
+  useEffect(() => {
+    !ReqLoading &&
+      //@ts-ignore
+      dispatch({
+        type: "ADD_FRIEND_REQUEST_NOTIFICATION",
+        payload: { Request: [ReqData?.FriendRequestSub] },
+      });
+  }, [ReqData]);
 
   useEffect(() => {
     !ReactLoading &&
@@ -35,6 +54,7 @@ const Chat = () => {
         type: "NEW_MESSAGE",
         payload: { newMessage: data?.NewMessage },
       });
+    //TODO Send New Message Notification
     if (!Messages.length) {
       !loading &&
         //@ts-ignore

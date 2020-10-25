@@ -66,7 +66,7 @@ const ChatInput = () => {
   if (!SentTo)
     return (
       <p style={{ textAlign: "center", fontSize: "2rem", padding: "2rem" }}>
-        Select User to Start Conversation
+        Select User to Start Conversation Or Add New User
       </p>
     );
   if (error)

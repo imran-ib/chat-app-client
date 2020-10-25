@@ -9,6 +9,7 @@ import { ChatSidebarSpinner } from "components/utils/Spinners/ChatSidebarSpinner
 import { useConversationStore } from "components/ChatComponents/ChatState";
 import Moment from "react-moment";
 import { useUser } from "components/Auth/Auth";
+import AddFriend from "components/ChatComponents/ChatComponents/TopBar/AddFriendButton/AddFriend";
 
 const Chats = () => {
   const dispatch = useConversationStore((state) => state.dispatch);
@@ -24,7 +25,6 @@ const Chats = () => {
   });
 
   const [GetMessages] = useGetMessagesLazyQuery({
-    
     onCompleted: (data) => {
       //@ts-ignore
       dispatch({
@@ -49,7 +49,10 @@ const Chats = () => {
     >
       <div>
         <div className="px-4 pt-4">
-          <h4 className="mb-4">Chats</h4>
+          <div className="d-flex justify-content-between">
+            <h4 className="mb-4">Chats</h4>
+            <AddFriend />
+          </div>
           <div className="search-box chat-search-box">
             <div className="input-group mb-3 bg-light  input-group-lg rounded-lg">
               <div className="input-group-prepend">

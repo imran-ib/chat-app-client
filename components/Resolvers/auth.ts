@@ -16,28 +16,26 @@ export const Users = gql`
 `;
 export const Friends = gql`
   query Friends {
-  Friends {
-    friends {
-      id
-      username
-      email
-      avatar
-      isActive
-      lastSeen
-      MessagesRecieved(last:1){
-        content
-        createdAt
+    Friends {
+      friends {
+        id
+        username
+        email
+        avatar
+        isActive
+        lastSeen
+        MessagesRecieved(last: 1) {
+          content
+          createdAt
+        }
+        MessagesSent(last: 1) {
+          content
+          createdAt
+        }
       }
-      MessagesSent(last:1){
-        content
-        createdAt
-      }
-     
     }
   }
-}
 `;
-
 
 export const CurrentUser = gql`
   query CurrentUser {
@@ -135,6 +133,55 @@ export const GoogleAuth = gql`
     }
   }
 `;
+
+export const GetUsers = gql`
+  query GetUsers($emailOrUsername: String!) {
+    GetUsers(emailOrUsername: $emailOrUsername) {
+      id
+      username
+      avatar
+    }
+  }
+`;
+
+export const AddFriend = gql`
+  mutation addFriend($id: Int!) {
+    AddFriend(id: $id)
+  }
+`;
+
+export const ConfirmFriendRequest = gql`
+  mutation ConfirmFriendRequest($id: Int!) {
+    ConfirmFriendRequest(id: $id)
+  }
+`;
+export const FriendRequestSub = gql`
+  subscription FriendRequestSub {
+    FriendRequestSub {
+      sender {
+        id
+        username
+        avatar
+      }
+      id
+    }
+  }
+`;
+
+export const GetFriendRequests = gql`
+  query GetFriendRequests {
+    GetFriendRequests {
+      id
+      createdAt
+      sender {
+        id
+        avatar
+        username
+      }
+    }
+  }
+`;
+
 
 // export const SetUserInactive = gql`
 //   mutation SetUserInactive($Id: number) {

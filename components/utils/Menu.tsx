@@ -4,7 +4,9 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { useAuthStore } from "components/Auth/Auth";
 import { useCurrentUserQuery } from "generated/graphql";
 
-const DotMenuStyle = styled.div`
+
+
+export const DotMenuStyle = styled.div`
   .MenuStyles {
     background-color: #292f3f;
     box-shadow: -15px 15px 15px rgba(55, 62, 78, 0.5);
@@ -22,11 +24,10 @@ const DotMenuStyle = styled.div`
     }
   }
 `;
-const DotsMenuIcon = styled.div`
+export const DotsMenuIcon = styled.div`
   background-image: url("/images/menu.png");
   width: 3.2rem;
   height: 3.2rem;
-
   cursor: pointer;
 `;
 

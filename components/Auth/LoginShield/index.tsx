@@ -54,14 +54,14 @@ const LoginShield: React.FC<any> = () => {
   return (
     <LoginStyles>
       <Heading className="mt-5">Please Login Before Continuing</Heading>
-      {error && (
+      {error ? (
         <Alert
           variant="danger"
           style={{ fontSize: "1.5rem", textAlign: "center" }}
         >
           {error.message}
         </Alert>
-      )}
+      ) : null}
       <Form method="Post" onSubmit={handleSubmit(onSubmit)}>
         <input
           ref={register({ required: true })}

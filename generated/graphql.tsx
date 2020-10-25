@@ -105,10 +105,14 @@ export type Query = {
   /** All Messages from User */
   GetMessages: Array<Messages>;
   Friends?: Maybe<User>;
+  GetUsers: Array<User>;
+  GetFriendRequests?: Maybe<Array<FriendsRequest>>;
 };
 
 
 export type QueryUsersArgs = {
+  where?: Maybe<UserWhereInput>;
+  orderBy?: Maybe<Array<UserOrderByInput>>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   before?: Maybe<UserWhereUniqueInput>;
@@ -136,10 +140,16 @@ export type QueryGetMessagesArgs = {
   from: Scalars['String'];
 };
 
+
+export type QueryGetUsersArgs = {
+  emailOrUsername: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   deleteManyUser: BatchPayload;
   deleteManyMessages: BatchPayload;
+  deleteManyFriendsRequest: BatchPayload;
   /** Create New User */
   CreateUser: AuthPayload;
   PasswordLogin: AuthPayload;
@@ -154,8 +164,10 @@ export type Mutation = {
   SetUserInactive: Scalars['String'];
   AddFriend: Scalars['String'];
   ConfirmFriendRequest: Scalars['String'];
+  RemoverFriend: Scalars['String'];
   /** React To Message */
   CreateReaction: Reaction;
+  SendFriendRequest: User;
 };
 
 
@@ -166,6 +178,11 @@ export type MutationDeleteManyUserArgs = {
 
 export type MutationDeleteManyMessagesArgs = {
   where?: Maybe<MessagesWhereInput>;
+};
+
+
+export type MutationDeleteManyFriendsRequestArgs = {
+  where?: Maybe<FriendsRequestWhereInput>;
 };
 
 
@@ -235,9 +252,19 @@ export type MutationConfirmFriendRequestArgs = {
 };
 
 
+export type MutationRemoverFriendArgs = {
+  FriendId: Scalars['Int'];
+};
+
+
 export type MutationCreateReactionArgs = {
   messageId: Scalars['Int'];
   content: Scalars['String'];
+};
+
+
+export type MutationSendFriendRequestArgs = {
+  emailOrUsername: Scalars['String'];
 };
 
 export type AuthPayload = {
@@ -319,11 +346,6 @@ export type ReactionWhereUniqueInput = {
 };
 
 
-export type BatchPayload = {
-  __typename?: 'BatchPayload';
-  count: Scalars['Int'];
-};
-
 export type UserWhereInput = {
   AND?: Maybe<Array<UserWhereInput>>;
   OR?: Maybe<Array<UserWhereInput>>;
@@ -345,13 +367,36 @@ export type UserWhereInput = {
   followedBy?: Maybe<UserListRelationFilter>;
   following?: Maybe<UserListRelationFilter>;
   friends?: Maybe<UserListRelationFilter>;
-  friend?: Maybe<UserWhereInput>;
+  friend?: Maybe<UserListRelationFilter>;
   friendId?: Maybe<IntNullableFilter>;
   isActive?: Maybe<BoolFilter>;
   lastSeen?: Maybe<StringNullableFilter>;
   reactions?: Maybe<ReactionListRelationFilter>;
   createdAt?: Maybe<DateTimeFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
+};
+
+export type UserOrderByInput = {
+  id?: Maybe<SortOrder>;
+  email?: Maybe<SortOrder>;
+  username?: Maybe<SortOrder>;
+  googleId?: Maybe<SortOrder>;
+  loginSecret?: Maybe<SortOrder>;
+  avatar?: Maybe<SortOrder>;
+  password?: Maybe<SortOrder>;
+  OneTimePassword?: Maybe<SortOrder>;
+  PasswordResetTokenExpiry?: Maybe<SortOrder>;
+  PasswordResetToken?: Maybe<SortOrder>;
+  friendId?: Maybe<SortOrder>;
+  isActive?: Maybe<SortOrder>;
+  lastSeen?: Maybe<SortOrder>;
+  createdAt?: Maybe<SortOrder>;
+  updatedAt?: Maybe<SortOrder>;
+};
+
+export type BatchPayload = {
+  __typename?: 'BatchPayload';
+  count: Scalars['Int'];
 };
 
 export type MessagesWhereInput = {
@@ -369,6 +414,19 @@ export type MessagesWhereInput = {
   isSenderFollowing?: Maybe<BoolFilter>;
   isSenderFollowedBy?: Maybe<BoolFilter>;
   reactions?: Maybe<ReactionListRelationFilter>;
+  createdAt?: Maybe<DateTimeFilter>;
+  updatedAt?: Maybe<DateTimeFilter>;
+};
+
+export type FriendsRequestWhereInput = {
+  AND?: Maybe<Array<FriendsRequestWhereInput>>;
+  OR?: Maybe<Array<FriendsRequestWhereInput>>;
+  NOT?: Maybe<Array<FriendsRequestWhereInput>>;
+  id?: Maybe<IntFilter>;
+  sender?: Maybe<UserWhereInput>;
+  RequsetSenderId?: Maybe<IntFilter>;
+  reciever?: Maybe<UserWhereInput>;
+  RequestReceiverId?: Maybe<IntFilter>;
   createdAt?: Maybe<DateTimeFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
 };
@@ -474,6 +532,11 @@ export type DateTimeFilter = {
   not?: Maybe<NestedDateTimeFilter>;
 };
 
+export enum SortOrder {
+  Asc = 'asc',
+  Desc = 'desc'
+}
+
 export type NestedIntFilter = {
   equals?: Maybe<Scalars['Int']>;
   in?: Maybe<Array<Scalars['Int']>>;
@@ -535,19 +598,6 @@ export type NestedFloatNullableFilter = {
   not?: Maybe<NestedFloatNullableFilter>;
 };
 
-export type FriendsRequestWhereInput = {
-  AND?: Maybe<Array<FriendsRequestWhereInput>>;
-  OR?: Maybe<Array<FriendsRequestWhereInput>>;
-  NOT?: Maybe<Array<FriendsRequestWhereInput>>;
-  id?: Maybe<IntFilter>;
-  sender?: Maybe<UserWhereInput>;
-  RequsetSenderId?: Maybe<IntFilter>;
-  reciever?: Maybe<UserWhereInput>;
-  RequestReceiverId?: Maybe<IntFilter>;
-  createdAt?: Maybe<DateTimeFilter>;
-  updatedAt?: Maybe<DateTimeFilter>;
-};
-
 export type NestedBoolFilter = {
   equals?: Maybe<Scalars['Boolean']>;
   not?: Maybe<NestedBoolFilter>;
@@ -582,6 +632,7 @@ export type Subscription = {
   __typename?: 'Subscription';
   NewMessage: Messages;
   ReactionToMessage: Reaction;
+  FriendRequestSub: FriendsRequest;
 };
 
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
@@ -738,6 +789,69 @@ export type GoogleAuthMutation = (
       & Pick<User, 'id' | 'email' | 'avatar' | 'username'>
     ) }
   ) }
+);
+
+export type GetUsersQueryVariables = Exact<{
+  emailOrUsername: Scalars['String'];
+}>;
+
+
+export type GetUsersQuery = (
+  { __typename?: 'Query' }
+  & { GetUsers: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username' | 'avatar'>
+  )> }
+);
+
+export type AddFriendMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type AddFriendMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'AddFriend'>
+);
+
+export type ConfirmFriendRequestMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type ConfirmFriendRequestMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'ConfirmFriendRequest'>
+);
+
+export type FriendRequestSubSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FriendRequestSubSubscription = (
+  { __typename?: 'Subscription' }
+  & { FriendRequestSub: (
+    { __typename?: 'FriendsRequest' }
+    & Pick<FriendsRequest, 'id'>
+    & { sender: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'avatar'>
+    ) }
+  ) }
+);
+
+export type GetFriendRequestsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFriendRequestsQuery = (
+  { __typename?: 'Query' }
+  & { GetFriendRequests?: Maybe<Array<(
+    { __typename?: 'FriendsRequest' }
+    & Pick<FriendsRequest, 'id' | 'createdAt'>
+    & { sender: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'avatar' | 'username'>
+    ) }
+  )>> }
 );
 
 export type GetMessagesQueryVariables = Exact<{
@@ -1199,6 +1313,172 @@ export function useGoogleAuthMutation(baseOptions?: Apollo.MutationHookOptions<G
 export type GoogleAuthMutationHookResult = ReturnType<typeof useGoogleAuthMutation>;
 export type GoogleAuthMutationResult = Apollo.MutationResult<GoogleAuthMutation>;
 export type GoogleAuthMutationOptions = Apollo.BaseMutationOptions<GoogleAuthMutation, GoogleAuthMutationVariables>;
+export const GetUsersDocument = gql`
+    query GetUsers($emailOrUsername: String!) {
+  GetUsers(emailOrUsername: $emailOrUsername) {
+    id
+    username
+    avatar
+  }
+}
+    `;
+
+/**
+ * __useGetUsersQuery__
+ *
+ * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersQuery({
+ *   variables: {
+ *      emailOrUsername: // value for 'emailOrUsername'
+ *   },
+ * });
+ */
+export function useGetUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+        return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, baseOptions);
+      }
+export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, baseOptions);
+        }
+export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
+export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
+export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export const AddFriendDocument = gql`
+    mutation addFriend($id: Int!) {
+  AddFriend(id: $id)
+}
+    `;
+export type AddFriendMutationFn = Apollo.MutationFunction<AddFriendMutation, AddFriendMutationVariables>;
+
+/**
+ * __useAddFriendMutation__
+ *
+ * To run a mutation, you first call `useAddFriendMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddFriendMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addFriendMutation, { data, loading, error }] = useAddFriendMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAddFriendMutation(baseOptions?: Apollo.MutationHookOptions<AddFriendMutation, AddFriendMutationVariables>) {
+        return Apollo.useMutation<AddFriendMutation, AddFriendMutationVariables>(AddFriendDocument, baseOptions);
+      }
+export type AddFriendMutationHookResult = ReturnType<typeof useAddFriendMutation>;
+export type AddFriendMutationResult = Apollo.MutationResult<AddFriendMutation>;
+export type AddFriendMutationOptions = Apollo.BaseMutationOptions<AddFriendMutation, AddFriendMutationVariables>;
+export const ConfirmFriendRequestDocument = gql`
+    mutation ConfirmFriendRequest($id: Int!) {
+  ConfirmFriendRequest(id: $id)
+}
+    `;
+export type ConfirmFriendRequestMutationFn = Apollo.MutationFunction<ConfirmFriendRequestMutation, ConfirmFriendRequestMutationVariables>;
+
+/**
+ * __useConfirmFriendRequestMutation__
+ *
+ * To run a mutation, you first call `useConfirmFriendRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConfirmFriendRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [confirmFriendRequestMutation, { data, loading, error }] = useConfirmFriendRequestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useConfirmFriendRequestMutation(baseOptions?: Apollo.MutationHookOptions<ConfirmFriendRequestMutation, ConfirmFriendRequestMutationVariables>) {
+        return Apollo.useMutation<ConfirmFriendRequestMutation, ConfirmFriendRequestMutationVariables>(ConfirmFriendRequestDocument, baseOptions);
+      }
+export type ConfirmFriendRequestMutationHookResult = ReturnType<typeof useConfirmFriendRequestMutation>;
+export type ConfirmFriendRequestMutationResult = Apollo.MutationResult<ConfirmFriendRequestMutation>;
+export type ConfirmFriendRequestMutationOptions = Apollo.BaseMutationOptions<ConfirmFriendRequestMutation, ConfirmFriendRequestMutationVariables>;
+export const FriendRequestSubDocument = gql`
+    subscription FriendRequestSub {
+  FriendRequestSub {
+    sender {
+      id
+      username
+      avatar
+    }
+    id
+  }
+}
+    `;
+
+/**
+ * __useFriendRequestSubSubscription__
+ *
+ * To run a query within a React component, call `useFriendRequestSubSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useFriendRequestSubSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFriendRequestSubSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFriendRequestSubSubscription(baseOptions?: Apollo.SubscriptionHookOptions<FriendRequestSubSubscription, FriendRequestSubSubscriptionVariables>) {
+        return Apollo.useSubscription<FriendRequestSubSubscription, FriendRequestSubSubscriptionVariables>(FriendRequestSubDocument, baseOptions);
+      }
+export type FriendRequestSubSubscriptionHookResult = ReturnType<typeof useFriendRequestSubSubscription>;
+export type FriendRequestSubSubscriptionResult = Apollo.SubscriptionResult<FriendRequestSubSubscription>;
+export const GetFriendRequestsDocument = gql`
+    query GetFriendRequests {
+  GetFriendRequests {
+    id
+    createdAt
+    sender {
+      id
+      avatar
+      username
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetFriendRequestsQuery__
+ *
+ * To run a query within a React component, call `useGetFriendRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFriendRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFriendRequestsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetFriendRequestsQuery(baseOptions?: Apollo.QueryHookOptions<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>) {
+        return Apollo.useQuery<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>(GetFriendRequestsDocument, baseOptions);
+      }
+export function useGetFriendRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>) {
+          return Apollo.useLazyQuery<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>(GetFriendRequestsDocument, baseOptions);
+        }
+export type GetFriendRequestsQueryHookResult = ReturnType<typeof useGetFriendRequestsQuery>;
+export type GetFriendRequestsLazyQueryHookResult = ReturnType<typeof useGetFriendRequestsLazyQuery>;
+export type GetFriendRequestsQueryResult = Apollo.QueryResult<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>;
 export const GetMessagesDocument = gql`
     query GetMessages($from: String!) {
   GetMessages(from: $from) {
