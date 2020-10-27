@@ -1521,6 +1521,11 @@
     lodash "^4.17.15"
     lodash-es "^4.17.15"
 
+"@rooks/use-window-size@^3.6.0":
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/@rooks/use-window-size/-/use-window-size-3.6.0.tgz#860e4f1b1b526f757e30b34eecc562569c6a1cc1"
+  integrity sha512-g1gN7XCb9ZqusxLTWlLfxVal7agy65GOM/YgD6zZCdPp0hJWCO9CSvTpYiYCXKWVzvjpveMKdAclXXFH928rnA==
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.1.tgz#a21117b19ee9be70c379ec1877537ef2e1c63301"

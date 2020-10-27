@@ -25,10 +25,16 @@ export const Friends = gql`
         isActive
         lastSeen
         MessagesRecieved(last: 1) {
+          id
+          ReceiverId
+          SenderId
           content
           createdAt
         }
         MessagesSent(last: 1) {
+          id
+          ReceiverId
+          SenderId
           content
           createdAt
         }
@@ -181,7 +187,6 @@ export const GetFriendRequests = gql`
     }
   }
 `;
-
 
 // export const SetUserInactive = gql`
 //   mutation SetUserInactive($Id: number) {

@@ -1,5 +1,8 @@
 import React from "react";
-import { useConversationStore } from "components/ChatComponents/ChatState";
+import {
+  useConversationStore,
+  useChatLeftSideStore,
+} from "components/ChatComponents/ChatState";
 import { User } from "generated/graphql";
 import { useUser } from "components/Auth/Auth";
 import AddFriend from "./AddFriendButton/AddFriend";
@@ -13,17 +16,21 @@ interface Props {
 const TopBar: React.FC<Props> = ({ ToggleOtherUser, setToggleOtherUser }) => {
   const CurrentUser = useUser();
   let user: User | any = useConversationStore((state) => state.user);
-
+  const setCloseChatForSmallScreen: any = useChatLeftSideStore(
+    (state) => state.setCloseChatForSmallScreen
+  );
   if (!user) {
     user = CurrentUser;
   }
-
   return (
     <>
       <div className="col-sm-4 col-8">
         <div className="media align-items-center">
           <div className="d-block d-lg-none mr-2">
-            <a className="user-chat-remove text-muted font-size-16 p-2">
+            <a
+              onClick={() => setCloseChatForSmallScreen()}
+              className="user-chat-remove text-muted font-size-16 p-2"
+            >
               <i className="ri-arrow-left-s-line"></i>
             </a>
           </div>

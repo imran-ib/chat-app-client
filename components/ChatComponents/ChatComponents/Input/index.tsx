@@ -7,6 +7,9 @@ import Alert from "react-bootstrap/Alert";
 import { Picker } from "emoji-mart";
 import { useOnClickOutside } from "components/utils/hooks/useClickOutside";
 import { ChatSpinner } from "components/utils/Spinners/ChatSidebarSpinners";
+import styled from "styled-components";
+import useWindowSize from "@rooks/use-window-size";
+import { AccountForm } from "components/styles/SharedStyles";
 
 const ChatInput = () => {
   const [isLoading, setLoading] = useState(false);
@@ -20,6 +23,7 @@ const ChatInput = () => {
   const inputFile = useRef(null);
   const [getMessage, { loading, error }] = useSendMessageMutation();
   useOnClickOutside(ref, () => SetEmojiPicker(false));
+  const { innerWidth } = useWindowSize();
 
   if (isLoading || loading) return <ChatSpinner />;
   // console.log("ChatInput -> uploadedImage", uploadedImage)
@@ -112,81 +116,90 @@ const ChatInput = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div
-        // @ts-ignore
-        ref={ref}
-        className="p-3 p-lg-4 border-top mb-0"
-      >
-        <div className="row no-gutters">
-          <div className="col">
-            <div>
-              <input
-                type="text"
-                name="message"
-                className="form-control form-control-lg bg-light border-light"
-                placeholder="Enter Message..."
-                value={message}
-                onChange={(event) => SetMessage(event.target.value)}
-              />
+    <InputComponentStyles className={innerWidth <= 991 ? "fixed-bottom" : ""}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <div
+          // @ts-ignore
+          ref={ref}
+          className="p-3 p-lg-4 border-top mb-0"
+        >
+          <div className="row no-gutters">
+            <div className="col">
+              <div>
+                <input
+                  type="text"
+                  name="message"
+                  className="form-control form-control-lg bg-light border-light"
+                  placeholder="Enter Message..."
+                  value={message}
+                  onChange={(event) => SetMessage(event.target.value)}
+                />
+              </div>
             </div>
-          </div>
-          <div className="col-auto">
-            <div className="chat-input-links ml-md-2">
-              <ul className="list-inline mb-0">
-                <li className="list-inline-item">
-                  <a
-                    onClick={triggerPicker}
-                    type="button"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Emoji"
-                  >
-                    🙂
-                    {/* <i className="ri-emotion-happy-line"></i> */}
-                  </a>
-                  {emojiPicker}
-                </li>
-                <li className="list-inline-item">
-                  <input
-                    name="image"
-                    onChange={handleOnChange}
-                    type="file"
-                    ref={inputFile}
-                    style={{ display: "none" }}
-                  />
+            <div className="col-auto">
+              <div className="chat-input-links ml-md-2">
+                <ul className="list-inline mb-0">
+                  <li className="list-inline-item">
+                    <a
+                      onClick={triggerPicker}
+                      type="button"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Emoji"
+                    >
+                      🙂
+                      {/* <i className="ri-emotion-happy-line"></i> */}
+                    </a>
+                    {emojiPicker}
+                  </li>
+                  <li className="list-inline-item">
+                    <input
+                      name="image"
+                      onChange={handleOnChange}
+                      type="file"
+                      ref={inputFile}
+                      style={{ display: "none" }}
+                    />
 
-                  <button
-                    onClick={onButtonClick}
-                    type="button"
-                    className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Attached File"
-                  >
-                    <i className="ri-attachment-line"></i>
-                  </button>
-                </li>
-                <li className="list-inline-item">
-                  <button
-                    disabled={loading}
-                    type="submit"
-                    className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light"
-                  >
-                    {loading ? (
-                      "wait.."
-                    ) : (
-                      <i className="ri-send-plane-2-fill"></i>
-                    )}
-                  </button>
-                </li>
-              </ul>
+                    <button
+                      onClick={onButtonClick}
+                      type="button"
+                      className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Attached File"
+                    >
+                      <i className="ri-attachment-line"></i>
+                    </button>
+                  </li>
+                  <li className="list-inline-item">
+                    <button
+                      disabled={loading}
+                      type="submit"
+                      className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light"
+                    >
+                      {loading ? (
+                        "wait.."
+                      ) : (
+                        <i className="ri-send-plane-2-fill"></i>
+                      )}
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </form>
+      </Form>
+    </InputComponentStyles>
   );
 };
+
+const InputComponentStyles = styled.div``;
+
+const Form = styled(AccountForm)`
+  margin-left: 0;
+  margin-right: 0;
+`;
 
 export default ChatInput;

@@ -658,10 +658,10 @@ export type FriendsQuery = (
       & Pick<User, 'id' | 'username' | 'email' | 'avatar' | 'isActive' | 'lastSeen'>
       & { MessagesRecieved: Array<(
         { __typename?: 'Messages' }
-        & Pick<Messages, 'content' | 'createdAt'>
+        & Pick<Messages, 'id' | 'ReceiverId' | 'SenderId' | 'content' | 'createdAt'>
       )>, MessagesSent: Array<(
         { __typename?: 'Messages' }
-        & Pick<Messages, 'content' | 'createdAt'>
+        & Pick<Messages, 'id' | 'ReceiverId' | 'SenderId' | 'content' | 'createdAt'>
       )> }
     )> }
   )> }
@@ -988,10 +988,16 @@ export const FriendsDocument = gql`
       isActive
       lastSeen
       MessagesRecieved(last: 1) {
+        id
+        ReceiverId
+        SenderId
         content
         createdAt
       }
       MessagesSent(last: 1) {
+        id
+        ReceiverId
+        SenderId
         content
         createdAt
       }

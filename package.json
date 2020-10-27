@@ -16,6 +16,7 @@
     "@graphql-codegen/cli": "^1.17.8",
     "@graphql-codegen/typescript-operations": "^1.17.8",
     "@graphql-codegen/typescript-react-apollo": "^2.0.6",
+    "@rooks/use-window-size": "^3.6.0",
     "@types/emoji-mart": "^3.0.2",
     "@types/lodash.debounce": "^4.0.6",
     "@types/ws": "^7.2.7",

@@ -1,19 +1,18 @@
 import React from "react";
 import styled from "styled-components";
-import {
-  useFriendsQuery,
-  useGetMessagesLazyQuery,
-  User,
-} from "generated/graphql";
+import { useFriendsQuery, User } from "generated/graphql";
 import { ChatSidebarSpinner } from "components/utils/Spinners/ChatSidebarSpinners";
 import { useConversationStore } from "components/ChatComponents/ChatState";
-import Moment from "react-moment";
 import { useUser } from "components/Auth/Auth";
 import AddFriend from "components/ChatComponents/ChatComponents/TopBar/AddFriendButton/AddFriend";
+import ListItem from "./ListItem";
+import useWindowSize from "@rooks/use-window-size";
 
 const Chats = () => {
-  const dispatch = useConversationStore((state) => state.dispatch);
+  const { innerWidth } = useWindowSize();
+
   const user: User | any = useUser();
+  const dispatch = useConversationStore((state) => state.dispatch);
   const { data: Friends, loading } = useFriendsQuery({
     onCompleted: (data) => {
       //@ts-ignore
@@ -23,21 +22,10 @@ const Chats = () => {
       });
     },
   });
-
-  const [GetMessages] = useGetMessagesLazyQuery({
-    onCompleted: (data) => {
-      //@ts-ignore
-      dispatch({
-        type: "SET_MESSAGES",
-        payload: { messages: data.GetMessages },
-      });
-    },
-  });
-
   const friends = Friends?.Friends?.friends;
-
   //@ts-ignore
   const users = friends?.filter((u) => u.id !== user.id);
+
   if (loading) return <ChatSidebarSpinner />;
 
   return (
@@ -49,9 +37,11 @@ const Chats = () => {
     >
       <div>
         <div className="px-4 pt-4">
-          <div className="d-flex justify-content-between">
-            <h4 className="mb-4">Chats</h4>
-            <AddFriend />
+          <div className="d-flex justify-content-between align-items-baseline">
+            <h4 className="mb-4 ">Chats</h4>
+            <div style={{ marginRight: `${innerWidth < 991 ? "2rem" : ""} ` }}>
+              <AddFriend />
+            </div>
           </div>
           <div className="search-box chat-search-box">
             <div className="input-group mb-3 bg-light  input-group-lg rounded-lg">
@@ -84,63 +74,7 @@ const Chats = () => {
           <div className="chat-message-list" data-simplebar>
             <ul className="list-unstyled chat-list chat-user-list">
               {users?.map((user) => (
-                <li
-                  onClick={async () => {
-                    GetMessages({
-                      variables: { from: user.username },
-                    });
-
-                    //@ts-ignore
-                    dispatch({ type: "SET_USER", payload: { user } });
-                  }}
-                  key={user.id}
-                >
-                  <a href="#">
-                    <div className="media">
-                      <div className="chat-user-img online align-self-center mr-3">
-                        <img
-                          //@ts-ignore
-                          src={user.avatar}
-                          className="rounded-circle avatar-xs"
-                          alt="user image"
-                        />
-                        <span className="user-status"></span>
-                      </div>
-
-                      <div className="media-body overflow-hidden">
-                        <h5 className="text-truncate font-size-15 mb-1">
-                          {user.username}
-                        </h5>
-                        <p className="chat-user-message text-truncate mb-0">
-                          {user.MessagesRecieved.length
-                            ? user.MessagesRecieved[0].content?.substring(0, 15)
-                            : ""}
-                          {user.MessagesSent.length
-                            ? user.MessagesSent[0].content?.substring(0, 15)
-                            : ""}
-                          {!user.MessagesRecieved.length &&
-                            !user.MessagesSent.length &&
-                            "Hey! there I'm available"}
-                        </p>
-                      </div>
-                      <div className="font-size-11">
-                        {user.MessagesRecieved.length &&
-                        user.MessagesRecieved[0]?.createdAt >
-                          user.MessagesSent[0]?.createdAt ? (
-                          <Moment
-                            date={user.MessagesRecieved[0]?.createdAt}
-                            fromNow
-                          />
-                        ) : (
-                          <Moment
-                            date={user.MessagesSent[0]?.createdAt}
-                            fromNow
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </a>
-                </li>
+                <ListItem key={user.id} user={user} />
               ))}
               {/* 
               <li className="unread">

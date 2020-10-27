@@ -8,45 +8,77 @@ export const useChatLeftSideStore = create((set) => ({
   Contacts: false,
   Settings: false,
   Group: false,
+  openChatForSmallScreen: false,
 
   setProfile: () =>
-    set(() => ({
+    set((state) => ({
+      ...state,
       Profile: true,
       Chats: false,
       Contacts: false,
       Settings: false,
       Group: false,
+      openChatForSmallScreen: false,
     })),
   setChats: () =>
-    set(() => ({
+    set((state) => ({
+      ...state,
       Chats: true,
       Profile: false,
       Contacts: false,
       Settings: false,
       Group: false,
+      openChatForSmallScreen: false,
     })),
   setContacts: () =>
-    set(() => ({
+    set((state) => ({
+      ...state,
       Contacts: true,
       Profile: false,
       Chats: false,
       Settings: false,
       Group: false,
+      openChatForSmallScreen: false,
     })),
   setSettings: () =>
-    set(() => ({
+    set((state) => ({
+      ...state,
       Settings: true,
       Profile: false,
       Chats: false,
       Contacts: false,
       Group: false,
+      openChatForSmallScreen: false,
     })),
+
   setGroup: () =>
-    set(() => ({
+    set((state) => ({
+      ...state,
       Group: true,
       Settings: false,
       Profile: false,
       Chats: false,
+      Contacts: false,
+      openChatForSmallScreen: false,
+    })),
+  setOpenChatForSmallScreen: () =>
+    set((state) => ({
+      ...state,
+      openChatForSmallScreen: true,
+      Group: false,
+      Settings: false,
+      Profile: false,
+      Chats: false,
+      Contacts: false,
+    })),
+  setCloseChatForSmallScreen: () =>
+    set((state) => ({
+      ...state,
+      Chats: true,
+      openChatForSmallScreen: false,
+      Group: false,
+      Settings: false,
+      Profile: false,
       Contacts: false,
     })),
 }));
