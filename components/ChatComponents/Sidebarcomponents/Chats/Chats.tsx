@@ -1,33 +1,16 @@
 import React from "react";
 import styled from "styled-components";
-import { useFriendsQuery, User } from "generated/graphql";
+import { useGetChatsQuery } from "generated/graphql";
 import { ChatSidebarSpinner } from "components/utils/Spinners/ChatSidebarSpinners";
-import { useConversationStore } from "components/ChatComponents/ChatState";
-import { useUser } from "components/Auth/Auth";
 import AddFriend from "components/ChatComponents/ChatComponents/TopBar/AddFriendButton/AddFriend";
 import ListItem from "./ListItem";
 import useWindowSize from "@rooks/use-window-size";
 
 const Chats = () => {
   const { innerWidth } = useWindowSize();
-
-  const user: User | any = useUser();
-  const dispatch = useConversationStore((state) => state.dispatch);
-  const { data: Friends, loading } = useFriendsQuery({
-    onCompleted: (data) => {
-      //@ts-ignore
-      dispatch({
-        type: "FRIENDS",
-        payload: { friends: data.Friends?.friends },
-      });
-    },
-  });
-  const friends = Friends?.Friends?.friends;
-  //@ts-ignore
-  const users = friends?.filter((u) => u.id !== user.id);
-
-  if (loading) return <ChatSidebarSpinner />;
-
+  const { data, loading: ChatLoading } = useGetChatsQuery();
+  if (ChatLoading) return <ChatSidebarSpinner />;
+  const chats = data?.GetChats?.map((c) => c.friend);
   return (
     <div
       className="tab-pane fade show active"
@@ -73,7 +56,7 @@ const Chats = () => {
 
           <div className="chat-message-list" data-simplebar>
             <ul className="list-unstyled chat-list chat-user-list">
-              {users?.map((user) => (
+              {chats?.map((user) => (
                 <ListItem key={user.id} user={user} />
               ))}
               {/* 

@@ -5,12 +5,16 @@ export let initialState = {
   messages: [],
   friends: [],
   request: [],
+  GetUsersBlockedStatusData: null,
+  NewMessageNotification: null,
 };
 interface State {
   user?: User;
   messages: Messages[];
   friends?: User[];
   request: [];
+  GetUsersBlockedStatusData: any;
+  NewMessageNotification: any;
 }
 
 export const reducer = (state: State, action: any) => {
@@ -33,12 +37,16 @@ export const reducer = (state: State, action: any) => {
           action.payload.newMessage,
         ],
       };
+    case "DELETE_MESSAGE":
+      return {
+        ...state,
+        messages: state.messages.filter((msg) => msg.id !== action.payload.id),
+      };
     case "FRIENDS":
       return {
         ...state,
         friends: action.payload.friends,
       };
-
     case "ADD_REACTION":
       let MessagesCopy = [...state.messages];
       let ReactedMessageIndex = MessagesCopy.findIndex(
@@ -66,7 +74,23 @@ export const reducer = (state: State, action: any) => {
         ...state,
         request: action.payload.Request,
       };
-
+    case "REMOVE_FRIEND_REQUEST_NOTIFICATION":
+      return {
+        ...state,
+        request: state.request.filter(
+          (req: any) => req.id !== action.payload.ReqId
+        ),
+      };
+    case "NEW_MESSAGE_NOTIFICATION":
+      return {
+        ...state,
+        NewMessageNotification: action.payload.NewMessageNotification,
+      };
+    case "USER_CHAT_BLOCKED_STATUS":
+      return {
+        ...state,
+        GetUsersBlockedStatusData: action.payload.status,
+      };
     default:
       throw new Error(`Unknown Action Type: ${action.type}`);
   }

@@ -21,7 +21,7 @@ const GoogleAuth = () => {
       // @ts-ignore
       dispatch({ type: "Login", payload: data?.GoogleAuth });
       if (data && !UserLoading && !error && called) refetch();
-      Router.push("/user/chat");
+      Router.push("/chat");
     },
   });
   if (loading) return <Spinner animation="grow" />;

@@ -18,7 +18,7 @@ export type User = {
   email: Scalars['String'];
   avatar?: Maybe<Scalars['String']>;
   username: Scalars['String'];
-  friends: Array<User>;
+  friends: Array<Friends>;
   MessagesRecieved: Array<Messages>;
   MessagesSent: Array<Messages>;
   followedBy: Array<User>;
@@ -27,6 +27,8 @@ export type User = {
   lastSeen?: Maybe<Scalars['String']>;
   FriendRequestRecieved: Array<FriendsRequest>;
   FriendRequsetSent: Array<FriendsRequest>;
+  BlockedMessagesIds: Array<Scalars['Int']>;
+  temporaryBlockOtherUserOnDeleteChatBlocker: Array<TemporaryBlockOtherUserOnDeleteChat>;
   reactions: Array<Reaction>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -36,8 +38,8 @@ export type User = {
 export type UserFriendsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  before?: Maybe<UserWhereUniqueInput>;
-  after?: Maybe<UserWhereUniqueInput>;
+  before?: Maybe<FriendsWhereUniqueInput>;
+  after?: Maybe<FriendsWhereUniqueInput>;
 };
 
 
@@ -89,6 +91,14 @@ export type UserFriendRequsetSentArgs = {
 };
 
 
+export type UserTemporaryBlockOtherUserOnDeleteChatBlockerArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<TemporaryBlockOtherUserOnDeleteChatWhereUniqueInput>;
+  after?: Maybe<TemporaryBlockOtherUserOnDeleteChatWhereUniqueInput>;
+};
+
+
 export type UserReactionsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
@@ -104,15 +114,15 @@ export type Query = {
   CurrentUser?: Maybe<User>;
   /** All Messages from User */
   GetMessages: Array<Messages>;
-  Friends?: Maybe<User>;
+  Friends?: Maybe<Array<Friends>>;
+  GetChats?: Maybe<Array<Friends>>;
   GetUsers: Array<User>;
   GetFriendRequests?: Maybe<Array<FriendsRequest>>;
+  GetUsersBlockedStatus?: Maybe<TemporaryBlockOtherUserOnDeleteChat>;
 };
 
 
 export type QueryUsersArgs = {
-  where?: Maybe<UserWhereInput>;
-  orderBy?: Maybe<Array<UserOrderByInput>>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   before?: Maybe<UserWhereUniqueInput>;
@@ -145,11 +155,13 @@ export type QueryGetUsersArgs = {
   emailOrUsername: Scalars['String'];
 };
 
+
+export type QueryGetUsersBlockedStatusArgs = {
+  username: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  deleteManyUser: BatchPayload;
-  deleteManyMessages: BatchPayload;
-  deleteManyFriendsRequest: BatchPayload;
   /** Create New User */
   CreateUser: AuthPayload;
   PasswordLogin: AuthPayload;
@@ -157,32 +169,28 @@ export type Mutation = {
   ValidateOTP: AuthPayload;
   RequestResetPassword: Scalars['String'];
   ResetPassword: AuthPayload;
-  /** Send Chat Message */
-  SendMessage: Messages;
   /** Log User in With Google */
   GoogleAuth: AuthPayload;
-  SetUserInactive: Scalars['String'];
   AddFriend: Scalars['String'];
-  ConfirmFriendRequest: Scalars['String'];
   RemoverFriend: Scalars['String'];
+  ConfirmFriendRequest: Scalars['String'];
+  /** Send Chat Message */
+  SendMessage: Messages;
+  /** Send Chat Message */
+  ForwardMessage: Messages;
+  /** Delete Message */
+  DeleteMessage: Scalars['String'];
+  /** Delete Chat */
+  DeleteChat: Scalars['String'];
+  /** Restore Deleted Chat */
+  RestoreDeletedChat: Array<Messages>;
+  SetUserInactive: Scalars['String'];
   /** React To Message */
   CreateReaction: Reaction;
-  SendFriendRequest: User;
-};
-
-
-export type MutationDeleteManyUserArgs = {
-  where?: Maybe<UserWhereInput>;
-};
-
-
-export type MutationDeleteManyMessagesArgs = {
-  where?: Maybe<MessagesWhereInput>;
-};
-
-
-export type MutationDeleteManyFriendsRequestArgs = {
-  where?: Maybe<FriendsRequestWhereInput>;
+  deleteManytemporaryBlockOtherUserOnDeleteChat: BatchPayload;
+  deleteManyUser: BatchPayload;
+  deleteManyFriendsRequest: BatchPayload;
+  deleteManyMessages: BatchPayload;
 };
 
 
@@ -222,14 +230,6 @@ export type MutationResetPasswordArgs = {
 };
 
 
-export type MutationSendMessageArgs = {
-  Sender: Scalars['String'];
-  Receiver: Scalars['String'];
-  content?: Maybe<Scalars['String']>;
-  image?: Maybe<Scalars['String']>;
-};
-
-
 export type MutationGoogleAuthArgs = {
   email?: Maybe<Scalars['String']>;
   images?: Maybe<Scalars['String']>;
@@ -237,17 +237,7 @@ export type MutationGoogleAuthArgs = {
 };
 
 
-export type MutationSetUserInactiveArgs = {
-  id: Scalars['Int'];
-};
-
-
 export type MutationAddFriendArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type MutationConfirmFriendRequestArgs = {
   id: Scalars['Int'];
 };
 
@@ -257,14 +247,72 @@ export type MutationRemoverFriendArgs = {
 };
 
 
+export type MutationConfirmFriendRequestArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationSendMessageArgs = {
+  Sender: Scalars['String'];
+  Receiver: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationForwardMessageArgs = {
+  Sender: Scalars['String'];
+  Receiver: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationDeleteMessageArgs = {
+  MessageId: Scalars['Int'];
+};
+
+
+export type MutationDeleteChatArgs = {
+  blockerId: Scalars['Int'];
+  blockeeId: Scalars['Int'];
+};
+
+
+export type MutationRestoreDeletedChatArgs = {
+  blocker: Scalars['Int'];
+  blockee: Scalars['Int'];
+};
+
+
+export type MutationSetUserInactiveArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationCreateReactionArgs = {
   messageId: Scalars['Int'];
   content: Scalars['String'];
 };
 
 
-export type MutationSendFriendRequestArgs = {
-  emailOrUsername: Scalars['String'];
+export type MutationDeleteManytemporaryBlockOtherUserOnDeleteChatArgs = {
+  where?: Maybe<TemporaryBlockOtherUserOnDeleteChatWhereInput>;
+};
+
+
+export type MutationDeleteManyUserArgs = {
+  where?: Maybe<UserWhereInput>;
+};
+
+
+export type MutationDeleteManyFriendsRequestArgs = {
+  where?: Maybe<FriendsRequestWhereInput>;
+};
+
+
+export type MutationDeleteManyMessagesArgs = {
+  where?: Maybe<MessagesWhereInput>;
 };
 
 export type AuthPayload = {
@@ -285,6 +333,7 @@ export type Messages = {
   isSenderFriend: Scalars['Boolean'];
   isSenderFollowing: Scalars['Boolean'];
   isSenderFollowedBy: Scalars['Boolean'];
+  forwarded: Scalars['Boolean'];
   reactions: Array<Reaction>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -320,10 +369,41 @@ export type Reaction = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type Friends = {
+  __typename?: 'Friends';
+  id: Scalars['Int'];
+  friend: User;
+  user: User;
+  friendId: Scalars['Int'];
+  userId: Scalars['Int'];
+};
+
+export type TemporaryBlockOtherUserOnDeleteChat = {
+  __typename?: 'temporaryBlockOtherUserOnDeleteChat';
+  id: Scalars['Int'];
+  blocker: User;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type MessagePayload = {
+  __typename?: 'MessagePayload';
+  message?: Maybe<Array<Messages>>;
+  BlockedStatus?: Maybe<TemporaryBlockOtherUserOnDeleteChat>;
+};
+
 export type FriendsPayload = {
   __typename?: 'FriendsPayload';
   user?: Maybe<User>;
   message?: Maybe<Array<Messages>>;
+};
+
+export type FriendsWhereUniqueInput = {
+  id?: Maybe<Scalars['Int']>;
+};
+
+export type MessagesWhereUniqueInput = {
+  id?: Maybe<Scalars['Int']>;
 };
 
 export type UserWhereUniqueInput = {
@@ -333,11 +413,11 @@ export type UserWhereUniqueInput = {
   googleId?: Maybe<Scalars['String']>;
 };
 
-export type MessagesWhereUniqueInput = {
+export type FriendsRequestWhereUniqueInput = {
   id?: Maybe<Scalars['Int']>;
 };
 
-export type FriendsRequestWhereUniqueInput = {
+export type TemporaryBlockOtherUserOnDeleteChatWhereUniqueInput = {
   id?: Maybe<Scalars['Int']>;
 };
 
@@ -345,6 +425,24 @@ export type ReactionWhereUniqueInput = {
   id?: Maybe<Scalars['Int']>;
 };
 
+
+export type BatchPayload = {
+  __typename?: 'BatchPayload';
+  count: Scalars['Int'];
+};
+
+export type TemporaryBlockOtherUserOnDeleteChatWhereInput = {
+  AND?: Maybe<Array<TemporaryBlockOtherUserOnDeleteChatWhereInput>>;
+  OR?: Maybe<Array<TemporaryBlockOtherUserOnDeleteChatWhereInput>>;
+  NOT?: Maybe<Array<TemporaryBlockOtherUserOnDeleteChatWhereInput>>;
+  id?: Maybe<IntFilter>;
+  blocker?: Maybe<UserWhereInput>;
+  blockerId?: Maybe<IntFilter>;
+  blockee?: Maybe<UserWhereInput>;
+  blockeeId?: Maybe<IntFilter>;
+  createdAt?: Maybe<DateTimeFilter>;
+  updatedAt?: Maybe<DateTimeFilter>;
+};
 
 export type UserWhereInput = {
   AND?: Maybe<Array<UserWhereInput>>;
@@ -366,37 +464,29 @@ export type UserWhereInput = {
   FriendRequestRecieved?: Maybe<FriendsRequestListRelationFilter>;
   followedBy?: Maybe<UserListRelationFilter>;
   following?: Maybe<UserListRelationFilter>;
-  friends?: Maybe<UserListRelationFilter>;
-  friend?: Maybe<UserListRelationFilter>;
-  friendId?: Maybe<IntNullableFilter>;
+  friends?: Maybe<FriendsListRelationFilter>;
   isActive?: Maybe<BoolFilter>;
   lastSeen?: Maybe<StringNullableFilter>;
   reactions?: Maybe<ReactionListRelationFilter>;
+  temporaryBlockOtherUserOnDeleteChatBlocker?: Maybe<TemporaryBlockOtherUserOnDeleteChatListRelationFilter>;
+  temporaryBlockOtherUserOnDeleteChatBlockee?: Maybe<TemporaryBlockOtherUserOnDeleteChatListRelationFilter>;
+  BlockedMessagesIds?: Maybe<IntNullableListFilter>;
   createdAt?: Maybe<DateTimeFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
+  Friends?: Maybe<FriendsListRelationFilter>;
 };
 
-export type UserOrderByInput = {
-  id?: Maybe<SortOrder>;
-  email?: Maybe<SortOrder>;
-  username?: Maybe<SortOrder>;
-  googleId?: Maybe<SortOrder>;
-  loginSecret?: Maybe<SortOrder>;
-  avatar?: Maybe<SortOrder>;
-  password?: Maybe<SortOrder>;
-  OneTimePassword?: Maybe<SortOrder>;
-  PasswordResetTokenExpiry?: Maybe<SortOrder>;
-  PasswordResetToken?: Maybe<SortOrder>;
-  friendId?: Maybe<SortOrder>;
-  isActive?: Maybe<SortOrder>;
-  lastSeen?: Maybe<SortOrder>;
-  createdAt?: Maybe<SortOrder>;
-  updatedAt?: Maybe<SortOrder>;
-};
-
-export type BatchPayload = {
-  __typename?: 'BatchPayload';
-  count: Scalars['Int'];
+export type FriendsRequestWhereInput = {
+  AND?: Maybe<Array<FriendsRequestWhereInput>>;
+  OR?: Maybe<Array<FriendsRequestWhereInput>>;
+  NOT?: Maybe<Array<FriendsRequestWhereInput>>;
+  id?: Maybe<IntFilter>;
+  sender?: Maybe<UserWhereInput>;
+  RequsetSenderId?: Maybe<IntFilter>;
+  reciever?: Maybe<UserWhereInput>;
+  RequestReceiverId?: Maybe<IntFilter>;
+  createdAt?: Maybe<DateTimeFilter>;
+  updatedAt?: Maybe<DateTimeFilter>;
 };
 
 export type MessagesWhereInput = {
@@ -413,20 +503,8 @@ export type MessagesWhereInput = {
   isSenderFriend?: Maybe<BoolFilter>;
   isSenderFollowing?: Maybe<BoolFilter>;
   isSenderFollowedBy?: Maybe<BoolFilter>;
+  forwarded?: Maybe<BoolFilter>;
   reactions?: Maybe<ReactionListRelationFilter>;
-  createdAt?: Maybe<DateTimeFilter>;
-  updatedAt?: Maybe<DateTimeFilter>;
-};
-
-export type FriendsRequestWhereInput = {
-  AND?: Maybe<Array<FriendsRequestWhereInput>>;
-  OR?: Maybe<Array<FriendsRequestWhereInput>>;
-  NOT?: Maybe<Array<FriendsRequestWhereInput>>;
-  id?: Maybe<IntFilter>;
-  sender?: Maybe<UserWhereInput>;
-  RequsetSenderId?: Maybe<IntFilter>;
-  reciever?: Maybe<UserWhereInput>;
-  RequestReceiverId?: Maybe<IntFilter>;
   createdAt?: Maybe<DateTimeFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
 };
@@ -440,6 +518,17 @@ export type IntFilter = {
   gt?: Maybe<Scalars['Int']>;
   gte?: Maybe<Scalars['Int']>;
   not?: Maybe<NestedIntFilter>;
+};
+
+export type DateTimeFilter = {
+  equals?: Maybe<Scalars['DateTime']>;
+  in?: Maybe<Array<Scalars['DateTime']>>;
+  notIn?: Maybe<Array<Scalars['DateTime']>>;
+  lt?: Maybe<Scalars['DateTime']>;
+  lte?: Maybe<Scalars['DateTime']>;
+  gt?: Maybe<Scalars['DateTime']>;
+  gte?: Maybe<Scalars['DateTime']>;
+  not?: Maybe<NestedDateTimeFilter>;
 };
 
 export type StringFilter = {
@@ -510,6 +599,12 @@ export type UserListRelationFilter = {
   none?: Maybe<UserWhereInput>;
 };
 
+export type FriendsListRelationFilter = {
+  every?: Maybe<FriendsWhereInput>;
+  some?: Maybe<FriendsWhereInput>;
+  none?: Maybe<FriendsWhereInput>;
+};
+
 export type BoolFilter = {
   equals?: Maybe<Scalars['Boolean']>;
   not?: Maybe<NestedBoolFilter>;
@@ -521,21 +616,15 @@ export type ReactionListRelationFilter = {
   none?: Maybe<ReactionWhereInput>;
 };
 
-export type DateTimeFilter = {
-  equals?: Maybe<Scalars['DateTime']>;
-  in?: Maybe<Array<Scalars['DateTime']>>;
-  notIn?: Maybe<Array<Scalars['DateTime']>>;
-  lt?: Maybe<Scalars['DateTime']>;
-  lte?: Maybe<Scalars['DateTime']>;
-  gt?: Maybe<Scalars['DateTime']>;
-  gte?: Maybe<Scalars['DateTime']>;
-  not?: Maybe<NestedDateTimeFilter>;
+export type TemporaryBlockOtherUserOnDeleteChatListRelationFilter = {
+  every?: Maybe<TemporaryBlockOtherUserOnDeleteChatWhereInput>;
+  some?: Maybe<TemporaryBlockOtherUserOnDeleteChatWhereInput>;
+  none?: Maybe<TemporaryBlockOtherUserOnDeleteChatWhereInput>;
 };
 
-export enum SortOrder {
-  Asc = 'asc',
-  Desc = 'desc'
-}
+export type IntNullableListFilter = {
+  equals?: Maybe<Array<Scalars['Int']>>;
+};
 
 export type NestedIntFilter = {
   equals?: Maybe<Scalars['Int']>;
@@ -546,6 +635,17 @@ export type NestedIntFilter = {
   gt?: Maybe<Scalars['Int']>;
   gte?: Maybe<Scalars['Int']>;
   not?: Maybe<NestedIntFilter>;
+};
+
+export type NestedDateTimeFilter = {
+  equals?: Maybe<Scalars['DateTime']>;
+  in?: Maybe<Array<Scalars['DateTime']>>;
+  notIn?: Maybe<Array<Scalars['DateTime']>>;
+  lt?: Maybe<Scalars['DateTime']>;
+  lte?: Maybe<Scalars['DateTime']>;
+  gt?: Maybe<Scalars['DateTime']>;
+  gte?: Maybe<Scalars['DateTime']>;
+  not?: Maybe<NestedDateTimeFilter>;
 };
 
 export type NestedStringFilter = {
@@ -598,6 +698,17 @@ export type NestedFloatNullableFilter = {
   not?: Maybe<NestedFloatNullableFilter>;
 };
 
+export type FriendsWhereInput = {
+  AND?: Maybe<Array<FriendsWhereInput>>;
+  OR?: Maybe<Array<FriendsWhereInput>>;
+  NOT?: Maybe<Array<FriendsWhereInput>>;
+  id?: Maybe<IntFilter>;
+  friend?: Maybe<UserWhereInput>;
+  user?: Maybe<UserWhereInput>;
+  friendId?: Maybe<IntFilter>;
+  userId?: Maybe<IntFilter>;
+};
+
 export type NestedBoolFilter = {
   equals?: Maybe<Scalars['Boolean']>;
   not?: Maybe<NestedBoolFilter>;
@@ -617,22 +728,12 @@ export type ReactionWhereInput = {
   updatedAt?: Maybe<DateTimeFilter>;
 };
 
-export type NestedDateTimeFilter = {
-  equals?: Maybe<Scalars['DateTime']>;
-  in?: Maybe<Array<Scalars['DateTime']>>;
-  notIn?: Maybe<Array<Scalars['DateTime']>>;
-  lt?: Maybe<Scalars['DateTime']>;
-  lte?: Maybe<Scalars['DateTime']>;
-  gt?: Maybe<Scalars['DateTime']>;
-  gte?: Maybe<Scalars['DateTime']>;
-  not?: Maybe<NestedDateTimeFilter>;
-};
-
 export type Subscription = {
   __typename?: 'Subscription';
   NewMessage: Messages;
   ReactionToMessage: Reaction;
   FriendRequestSub: FriendsRequest;
+  DeleteMessageSub: Messages;
 };
 
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
@@ -651,9 +752,9 @@ export type FriendsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type FriendsQuery = (
   { __typename?: 'Query' }
-  & { Friends?: Maybe<(
-    { __typename?: 'User' }
-    & { friends: Array<(
+  & { Friends?: Maybe<Array<(
+    { __typename?: 'Friends' }
+    & { friend: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username' | 'email' | 'avatar' | 'isActive' | 'lastSeen'>
       & { MessagesRecieved: Array<(
@@ -663,8 +764,8 @@ export type FriendsQuery = (
         { __typename?: 'Messages' }
         & Pick<Messages, 'id' | 'ReceiverId' | 'SenderId' | 'content' | 'createdAt'>
       )> }
-    )> }
-  )> }
+    ) }
+  )>> }
 );
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
@@ -854,6 +955,16 @@ export type GetFriendRequestsQuery = (
   )>> }
 );
 
+export type RemoveFriendMutationVariables = Exact<{
+  FriendId: Scalars['Int'];
+}>;
+
+
+export type RemoveFriendMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'RemoverFriend'>
+);
+
 export type GetMessagesQueryVariables = Exact<{
   from: Scalars['String'];
 }>;
@@ -863,7 +974,7 @@ export type GetMessagesQuery = (
   { __typename?: 'Query' }
   & { GetMessages: Array<(
     { __typename?: 'Messages' }
-    & Pick<Messages, 'id' | 'content' | 'image' | 'isSenderFriend' | 'isSenderFollowing' | 'ReceiverId' | 'SenderId' | 'createdAt' | 'updatedAt'>
+    & Pick<Messages, 'id' | 'content' | 'image' | 'isSenderFriend' | 'isSenderFollowing' | 'ReceiverId' | 'forwarded' | 'SenderId' | 'createdAt' | 'updatedAt'>
     & { from: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username' | 'avatar'>
@@ -893,6 +1004,22 @@ export type SendMessageMutation = (
   ) }
 );
 
+export type ForwardMessageMutationVariables = Exact<{
+  Sender: Scalars['String'];
+  Receiver: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+}>;
+
+
+export type ForwardMessageMutation = (
+  { __typename?: 'Mutation' }
+  & { ForwardMessage: (
+    { __typename?: 'Messages' }
+    & Pick<Messages, 'id' | 'content'>
+  ) }
+);
+
 export type NewMessageSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -911,6 +1038,17 @@ export type NewMessageSubscription = (
       { __typename?: 'Reaction' }
       & Pick<Reaction, 'id' | 'content' | 'userId' | 'messageId' | 'createdAt'>
     )> }
+  ) }
+);
+
+export type DeleteMessageSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DeleteMessageSubscriptionSubscription = (
+  { __typename?: 'Subscription' }
+  & { DeleteMessageSub: (
+    { __typename?: 'Messages' }
+    & Pick<Messages, 'id'>
   ) }
 );
 
@@ -937,6 +1075,85 @@ export type ReactionToMessageSubscription = (
     { __typename?: 'Reaction' }
     & Pick<Reaction, 'id' | 'content' | 'userId' | 'messageId' | 'createdAt'>
   ) }
+);
+
+export type DeleteMessageMutationVariables = Exact<{
+  MessageId: Scalars['Int'];
+}>;
+
+
+export type DeleteMessageMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'DeleteMessage'>
+);
+
+export type DeleteChatMutationVariables = Exact<{
+  blockerId: Scalars['Int'];
+  blockeeId: Scalars['Int'];
+}>;
+
+
+export type DeleteChatMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'DeleteChat'>
+);
+
+export type GetChatsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetChatsQuery = (
+  { __typename?: 'Query' }
+  & { GetChats?: Maybe<Array<(
+    { __typename?: 'Friends' }
+    & { friend: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'email' | 'avatar' | 'isActive' | 'lastSeen'>
+      & { MessagesRecieved: Array<(
+        { __typename?: 'Messages' }
+        & Pick<Messages, 'id' | 'ReceiverId' | 'SenderId' | 'content' | 'createdAt'>
+      )>, MessagesSent: Array<(
+        { __typename?: 'Messages' }
+        & Pick<Messages, 'id' | 'ReceiverId' | 'SenderId' | 'content' | 'createdAt'>
+      )> }
+    ) }
+  )>> }
+);
+
+export type GetUsersBlockedStatusQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type GetUsersBlockedStatusQuery = (
+  { __typename?: 'Query' }
+  & { GetUsersBlockedStatus?: Maybe<(
+    { __typename?: 'temporaryBlockOtherUserOnDeleteChat' }
+    & Pick<TemporaryBlockOtherUserOnDeleteChat, 'id'>
+  )> }
+);
+
+export type RestoreDeletedChatMutationVariables = Exact<{
+  blocker: Scalars['Int'];
+  blockee: Scalars['Int'];
+}>;
+
+
+export type RestoreDeletedChatMutation = (
+  { __typename?: 'Mutation' }
+  & { RestoreDeletedChat: Array<(
+    { __typename?: 'Messages' }
+    & Pick<Messages, 'id' | 'content' | 'image' | 'isSenderFriend' | 'isSenderFollowing' | 'ReceiverId' | 'forwarded' | 'SenderId' | 'createdAt' | 'updatedAt'>
+    & { from: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'avatar'>
+    ), to: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'avatar'>
+    ), reactions: Array<(
+      { __typename?: 'Reaction' }
+      & Pick<Reaction, 'content' | 'userId' | 'messageId' | 'createdAt'>
+    )> }
+  )> }
 );
 
 
@@ -980,7 +1197,7 @@ export type UsersQueryResult = Apollo.QueryResult<UsersQuery, UsersQueryVariable
 export const FriendsDocument = gql`
     query Friends {
   Friends {
-    friends {
+    friend {
       id
       username
       email
@@ -1485,6 +1702,36 @@ export function useGetFriendRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetFriendRequestsQueryHookResult = ReturnType<typeof useGetFriendRequestsQuery>;
 export type GetFriendRequestsLazyQueryHookResult = ReturnType<typeof useGetFriendRequestsLazyQuery>;
 export type GetFriendRequestsQueryResult = Apollo.QueryResult<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>;
+export const RemoveFriendDocument = gql`
+    mutation RemoveFriend($FriendId: Int!) {
+  RemoverFriend(FriendId: $FriendId)
+}
+    `;
+export type RemoveFriendMutationFn = Apollo.MutationFunction<RemoveFriendMutation, RemoveFriendMutationVariables>;
+
+/**
+ * __useRemoveFriendMutation__
+ *
+ * To run a mutation, you first call `useRemoveFriendMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveFriendMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeFriendMutation, { data, loading, error }] = useRemoveFriendMutation({
+ *   variables: {
+ *      FriendId: // value for 'FriendId'
+ *   },
+ * });
+ */
+export function useRemoveFriendMutation(baseOptions?: Apollo.MutationHookOptions<RemoveFriendMutation, RemoveFriendMutationVariables>) {
+        return Apollo.useMutation<RemoveFriendMutation, RemoveFriendMutationVariables>(RemoveFriendDocument, baseOptions);
+      }
+export type RemoveFriendMutationHookResult = ReturnType<typeof useRemoveFriendMutation>;
+export type RemoveFriendMutationResult = Apollo.MutationResult<RemoveFriendMutation>;
+export type RemoveFriendMutationOptions = Apollo.BaseMutationOptions<RemoveFriendMutation, RemoveFriendMutationVariables>;
 export const GetMessagesDocument = gql`
     query GetMessages($from: String!) {
   GetMessages(from: $from) {
@@ -1510,6 +1757,7 @@ export const GetMessagesDocument = gql`
     isSenderFriend
     isSenderFollowing
     ReceiverId
+    forwarded
     SenderId
     createdAt
     updatedAt
@@ -1578,6 +1826,42 @@ export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<
 export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
 export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
 export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
+export const ForwardMessageDocument = gql`
+    mutation ForwardMessage($Sender: String!, $Receiver: String!, $content: String = "Empty Message", $image: String = "No Image to display") {
+  ForwardMessage(Sender: $Sender, Receiver: $Receiver, content: $content, image: $image) {
+    id
+    content
+  }
+}
+    `;
+export type ForwardMessageMutationFn = Apollo.MutationFunction<ForwardMessageMutation, ForwardMessageMutationVariables>;
+
+/**
+ * __useForwardMessageMutation__
+ *
+ * To run a mutation, you first call `useForwardMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useForwardMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [forwardMessageMutation, { data, loading, error }] = useForwardMessageMutation({
+ *   variables: {
+ *      Sender: // value for 'Sender'
+ *      Receiver: // value for 'Receiver'
+ *      content: // value for 'content'
+ *      image: // value for 'image'
+ *   },
+ * });
+ */
+export function useForwardMessageMutation(baseOptions?: Apollo.MutationHookOptions<ForwardMessageMutation, ForwardMessageMutationVariables>) {
+        return Apollo.useMutation<ForwardMessageMutation, ForwardMessageMutationVariables>(ForwardMessageDocument, baseOptions);
+      }
+export type ForwardMessageMutationHookResult = ReturnType<typeof useForwardMessageMutation>;
+export type ForwardMessageMutationResult = Apollo.MutationResult<ForwardMessageMutation>;
+export type ForwardMessageMutationOptions = Apollo.BaseMutationOptions<ForwardMessageMutation, ForwardMessageMutationVariables>;
 export const NewMessageDocument = gql`
     subscription NewMessage {
   NewMessage {
@@ -1631,6 +1915,34 @@ export function useNewMessageSubscription(baseOptions?: Apollo.SubscriptionHookO
       }
 export type NewMessageSubscriptionHookResult = ReturnType<typeof useNewMessageSubscription>;
 export type NewMessageSubscriptionResult = Apollo.SubscriptionResult<NewMessageSubscription>;
+export const DeleteMessageSubscriptionDocument = gql`
+    subscription DeleteMessageSubscription {
+  DeleteMessageSub {
+    id
+  }
+}
+    `;
+
+/**
+ * __useDeleteMessageSubscriptionSubscription__
+ *
+ * To run a query within a React component, call `useDeleteMessageSubscriptionSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useDeleteMessageSubscriptionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDeleteMessageSubscriptionSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDeleteMessageSubscriptionSubscription(baseOptions?: Apollo.SubscriptionHookOptions<DeleteMessageSubscriptionSubscription, DeleteMessageSubscriptionSubscriptionVariables>) {
+        return Apollo.useSubscription<DeleteMessageSubscriptionSubscription, DeleteMessageSubscriptionSubscriptionVariables>(DeleteMessageSubscriptionDocument, baseOptions);
+      }
+export type DeleteMessageSubscriptionSubscriptionHookResult = ReturnType<typeof useDeleteMessageSubscriptionSubscription>;
+export type DeleteMessageSubscriptionSubscriptionResult = Apollo.SubscriptionResult<DeleteMessageSubscriptionSubscription>;
 export const ReactionDocument = gql`
     mutation Reaction($messageId: Int!, $content: String!) {
   CreateReaction(messageId: $messageId, content: $content) {
@@ -1698,3 +2010,208 @@ export function useReactionToMessageSubscription(baseOptions?: Apollo.Subscripti
       }
 export type ReactionToMessageSubscriptionHookResult = ReturnType<typeof useReactionToMessageSubscription>;
 export type ReactionToMessageSubscriptionResult = Apollo.SubscriptionResult<ReactionToMessageSubscription>;
+export const DeleteMessageDocument = gql`
+    mutation DeleteMessage($MessageId: Int!) {
+  DeleteMessage(MessageId: $MessageId)
+}
+    `;
+export type DeleteMessageMutationFn = Apollo.MutationFunction<DeleteMessageMutation, DeleteMessageMutationVariables>;
+
+/**
+ * __useDeleteMessageMutation__
+ *
+ * To run a mutation, you first call `useDeleteMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteMessageMutation, { data, loading, error }] = useDeleteMessageMutation({
+ *   variables: {
+ *      MessageId: // value for 'MessageId'
+ *   },
+ * });
+ */
+export function useDeleteMessageMutation(baseOptions?: Apollo.MutationHookOptions<DeleteMessageMutation, DeleteMessageMutationVariables>) {
+        return Apollo.useMutation<DeleteMessageMutation, DeleteMessageMutationVariables>(DeleteMessageDocument, baseOptions);
+      }
+export type DeleteMessageMutationHookResult = ReturnType<typeof useDeleteMessageMutation>;
+export type DeleteMessageMutationResult = Apollo.MutationResult<DeleteMessageMutation>;
+export type DeleteMessageMutationOptions = Apollo.BaseMutationOptions<DeleteMessageMutation, DeleteMessageMutationVariables>;
+export const DeleteChatDocument = gql`
+    mutation DeleteChat($blockerId: Int!, $blockeeId: Int!) {
+  DeleteChat(blockerId: $blockerId, blockeeId: $blockeeId)
+}
+    `;
+export type DeleteChatMutationFn = Apollo.MutationFunction<DeleteChatMutation, DeleteChatMutationVariables>;
+
+/**
+ * __useDeleteChatMutation__
+ *
+ * To run a mutation, you first call `useDeleteChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteChatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteChatMutation, { data, loading, error }] = useDeleteChatMutation({
+ *   variables: {
+ *      blockerId: // value for 'blockerId'
+ *      blockeeId: // value for 'blockeeId'
+ *   },
+ * });
+ */
+export function useDeleteChatMutation(baseOptions?: Apollo.MutationHookOptions<DeleteChatMutation, DeleteChatMutationVariables>) {
+        return Apollo.useMutation<DeleteChatMutation, DeleteChatMutationVariables>(DeleteChatDocument, baseOptions);
+      }
+export type DeleteChatMutationHookResult = ReturnType<typeof useDeleteChatMutation>;
+export type DeleteChatMutationResult = Apollo.MutationResult<DeleteChatMutation>;
+export type DeleteChatMutationOptions = Apollo.BaseMutationOptions<DeleteChatMutation, DeleteChatMutationVariables>;
+export const GetChatsDocument = gql`
+    query GetChats {
+  GetChats {
+    friend {
+      id
+      username
+      email
+      avatar
+      isActive
+      lastSeen
+      MessagesRecieved(last: 1) {
+        id
+        ReceiverId
+        SenderId
+        content
+        createdAt
+      }
+      MessagesSent(last: 1) {
+        id
+        ReceiverId
+        SenderId
+        content
+        createdAt
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetChatsQuery__
+ *
+ * To run a query within a React component, call `useGetChatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetChatsQuery(baseOptions?: Apollo.QueryHookOptions<GetChatsQuery, GetChatsQueryVariables>) {
+        return Apollo.useQuery<GetChatsQuery, GetChatsQueryVariables>(GetChatsDocument, baseOptions);
+      }
+export function useGetChatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatsQuery, GetChatsQueryVariables>) {
+          return Apollo.useLazyQuery<GetChatsQuery, GetChatsQueryVariables>(GetChatsDocument, baseOptions);
+        }
+export type GetChatsQueryHookResult = ReturnType<typeof useGetChatsQuery>;
+export type GetChatsLazyQueryHookResult = ReturnType<typeof useGetChatsLazyQuery>;
+export type GetChatsQueryResult = Apollo.QueryResult<GetChatsQuery, GetChatsQueryVariables>;
+export const GetUsersBlockedStatusDocument = gql`
+    query GetUsersBlockedStatus($username: String!) {
+  GetUsersBlockedStatus(username: $username) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetUsersBlockedStatusQuery__
+ *
+ * To run a query within a React component, call `useGetUsersBlockedStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersBlockedStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersBlockedStatusQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useGetUsersBlockedStatusQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersBlockedStatusQuery, GetUsersBlockedStatusQueryVariables>) {
+        return Apollo.useQuery<GetUsersBlockedStatusQuery, GetUsersBlockedStatusQueryVariables>(GetUsersBlockedStatusDocument, baseOptions);
+      }
+export function useGetUsersBlockedStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersBlockedStatusQuery, GetUsersBlockedStatusQueryVariables>) {
+          return Apollo.useLazyQuery<GetUsersBlockedStatusQuery, GetUsersBlockedStatusQueryVariables>(GetUsersBlockedStatusDocument, baseOptions);
+        }
+export type GetUsersBlockedStatusQueryHookResult = ReturnType<typeof useGetUsersBlockedStatusQuery>;
+export type GetUsersBlockedStatusLazyQueryHookResult = ReturnType<typeof useGetUsersBlockedStatusLazyQuery>;
+export type GetUsersBlockedStatusQueryResult = Apollo.QueryResult<GetUsersBlockedStatusQuery, GetUsersBlockedStatusQueryVariables>;
+export const RestoreDeletedChatDocument = gql`
+    mutation RestoreDeletedChat($blocker: Int!, $blockee: Int!) {
+  RestoreDeletedChat(blocker: $blocker, blockee: $blockee) {
+    id
+    content
+    from {
+      id
+      username
+      avatar
+    }
+    to {
+      id
+      username
+      avatar
+    }
+    reactions {
+      content
+      userId
+      messageId
+      createdAt
+    }
+    image
+    isSenderFriend
+    isSenderFollowing
+    ReceiverId
+    forwarded
+    SenderId
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type RestoreDeletedChatMutationFn = Apollo.MutationFunction<RestoreDeletedChatMutation, RestoreDeletedChatMutationVariables>;
+
+/**
+ * __useRestoreDeletedChatMutation__
+ *
+ * To run a mutation, you first call `useRestoreDeletedChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRestoreDeletedChatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [restoreDeletedChatMutation, { data, loading, error }] = useRestoreDeletedChatMutation({
+ *   variables: {
+ *      blocker: // value for 'blocker'
+ *      blockee: // value for 'blockee'
+ *   },
+ * });
+ */
+export function useRestoreDeletedChatMutation(baseOptions?: Apollo.MutationHookOptions<RestoreDeletedChatMutation, RestoreDeletedChatMutationVariables>) {
+        return Apollo.useMutation<RestoreDeletedChatMutation, RestoreDeletedChatMutationVariables>(RestoreDeletedChatDocument, baseOptions);
+      }
+export type RestoreDeletedChatMutationHookResult = ReturnType<typeof useRestoreDeletedChatMutation>;
+export type RestoreDeletedChatMutationResult = Apollo.MutationResult<RestoreDeletedChatMutation>;
+export type RestoreDeletedChatMutationOptions = Apollo.BaseMutationOptions<RestoreDeletedChatMutation, RestoreDeletedChatMutationVariables>;

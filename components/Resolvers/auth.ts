@@ -17,7 +17,7 @@ export const Users = gql`
 export const Friends = gql`
   query Friends {
     Friends {
-      friends {
+      friend {
         id
         username
         email
@@ -188,8 +188,8 @@ export const GetFriendRequests = gql`
   }
 `;
 
-// export const SetUserInactive = gql`
-//   mutation SetUserInactive($Id: number) {
-//     SetUserInactive(id: $id)
-//   }
-// `;
+export const RemoveFriend = gql`
+  mutation RemoveFriend($FriendId: Int!) {
+    RemoverFriend(FriendId: $FriendId)
+  }
+`;

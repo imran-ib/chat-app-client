@@ -8,7 +8,7 @@ interface ModalProps {
   onHide: () => void | any;
   children: React.ReactNode;
 }
-
+// Props from useModalStore state
 const ModalComponent: React.FC<ModalProps> = (props) => {
   const { show, onHide, children } = props;
   return (

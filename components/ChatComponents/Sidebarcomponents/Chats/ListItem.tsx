@@ -1,10 +1,12 @@
 import React from "react";
-import { useGetMessagesLazyQuery } from "generated/graphql";
+import {
+  useGetMessagesLazyQuery,
+  useGetUsersBlockedStatusLazyQuery,
+} from "generated/graphql";
 import {
   useConversationStore,
   useChatLeftSideStore,
 } from "components/ChatComponents/ChatState";
-import { useUser } from "components/Auth/Auth";
 import useWindowSize from "@rooks/use-window-size";
 import Moment from "react-moment";
 
@@ -19,7 +21,19 @@ const ListItem = ({ user }: any) => {
   const { innerWidth } = useWindowSize();
   const IsSmallScreen = innerWidth <= 941;
 
+  const [GetUsersBlockedStatus] = useGetUsersBlockedStatusLazyQuery({
+    fetchPolicy: "no-cache",
+    onCompleted: (data) => {
+      //@ts-ignore
+      dispatch({
+        type: "USER_CHAT_BLOCKED_STATUS",
+        payload: { status: data.GetUsersBlockedStatus },
+      });
+    },
+  });
+
   const [GetMessages] = useGetMessagesLazyQuery({
+    fetchPolicy: "no-cache",
     onCompleted: (data) => {
       //@ts-ignore
       dispatch({
@@ -33,15 +47,16 @@ const ListItem = ({ user }: any) => {
   const LastMessageIndex = messages.length && messages.length - 1;
   const LastMessage = messages[LastMessageIndex];
 
+
   return (
     <li
       onClick={() => {
-        if (innerWidth < 941) {
-          console.log("Hello");
-        }
-
         GetMessages({
           variables: { from: user.username },
+        });
+
+        GetUsersBlockedStatus({
+          variables: { username: user.username },
         });
 
         //@ts-ignore
@@ -49,7 +64,7 @@ const ListItem = ({ user }: any) => {
       }}
       key={user.id}
     >
-      <a href="#">
+      <a>
         <div className="media">
           <div className="chat-user-img online align-self-center mr-3">
             <img

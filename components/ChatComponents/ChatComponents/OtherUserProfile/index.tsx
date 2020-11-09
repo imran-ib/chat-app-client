@@ -1,20 +1,43 @@
 import React from "react";
+import {
+  useChatLeftSideStore,
+  useConversationStore,
+} from "components/ChatComponents/ChatState";
+import { User } from "generated/graphql";
+import { useUser } from "components/Auth/Auth";
 
-interface Props {
-  ToggleOtherUser:boolean;
-setToggleOtherUser:React.Dispatch<React.SetStateAction<boolean>>
+const OtherUserProfile: React.FC<any> = () => {
+  const CurrentUser = useUser();
 
-}
+  let user: User | any = useConversationStore((state) => state.user);
+  const otherUsersProfileActive: any = useChatLeftSideStore(
+    (state) => state.otherUsersProfileActive
+  );
 
-const OtherUserProfile:React.FC<Props> = ({ ToggleOtherUser,setToggleOtherUser }) => {
+  const setOtherUsersProfileClose: any = useChatLeftSideStore(
+    (state) => state.setOtherUsersProfileClose
+  );
+  if (!user) {
+    user = CurrentUser;
+  }
   return (
     <div
-      className="user-profile-sidebar"
-      style={{ display: `${ToggleOtherUser} ? "block":"none"` }}
+      className={
+        otherUsersProfileActive
+          ? "user-profile-sidebar d-block"
+          : "user-profile-sidebar "
+      }
     >
       <div className="px-3 px-lg-4 pt-3 pt-lg-4">
         <div className="user-chat-nav text-right">
-          <button type="button" className="btn nav-btn" id="user-profile-hide">
+          <button
+            onClick={() => {
+              setOtherUsersProfileClose();
+            }}
+            type="button"
+            className="btn nav-btn"
+            id="user-profile-hide"
+          >
             <i className="ri-close-line"></i>
           </button>
         </div>
@@ -23,13 +46,13 @@ const OtherUserProfile:React.FC<Props> = ({ ToggleOtherUser,setToggleOtherUser }
       <div className="text-center p-4 border-bottom">
         <div className="mb-4">
           <img
-            src="/images/users/avatar-4.jpg"
+            src={user.avatar}
             className="rounded-circle avatar-lg img-thumbnail"
             alt=""
           />
         </div>
 
-        <h5 className="font-size-16 mb-1 text-truncate">Doris Brown</h5>
+        <h5 className="font-size-16 mb-1 text-truncate">{user.username}</h5>
         <p className="text-muted text-truncate mb-1">
           <i className="ri-record-circle-fill font-size-10 text-success mr-1"></i>
           Active

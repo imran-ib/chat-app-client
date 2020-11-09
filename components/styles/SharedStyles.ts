@@ -78,3 +78,22 @@ export const AccountForm = styled.form`
     }
   }
 `;
+
+export const DropMenuStyles = styled.div`
+  .dropdown-menu {
+    background-color: #292f3f;
+  }
+  & a {
+    /* box-shadow: -15px 15px 15px rgba(55, 62, 78, 0.5); */
+    color: #ffdc00;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  /* remove bootstrap default dropdown caret icon  */
+  .dropdown-toggle {
+    & ::after {
+      display: none;
+    }
+  }
+`;

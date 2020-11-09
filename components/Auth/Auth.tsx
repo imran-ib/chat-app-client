@@ -27,10 +27,9 @@ function useUser() {
     return null;
   }
 }
-const initialState = null
+const initialState = null;
 
-
- const useAuthStore = create(
+const useAuthStore = create(
   // Connects store to devtools
   // Without reducers and action-types you would see "setState" logged out instead
   devtools(
@@ -38,7 +37,7 @@ const initialState = null
     // Adds a dispatch method to the store as well as to the api
     redux(AuthReducer, initialState)
   )
-)
+);
 
 // const useAuthStore = create(
 //   devtools((set) => ({

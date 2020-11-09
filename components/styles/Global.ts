@@ -42,7 +42,7 @@ export const GlobalStyles: GlobalStyleComponent<
 > = createGlobalStyle`
  ${reset}
  html { 
-  overflow: hidden;
+  overflow-x: hidden;
   font-size: 10px;
   height: 100%;
 }

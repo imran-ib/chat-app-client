@@ -9,6 +9,7 @@ export const useChatLeftSideStore = create((set) => ({
   Settings: false,
   Group: false,
   openChatForSmallScreen: false,
+  otherUsersProfileActive: false,
 
   setProfile: () =>
     set((state) => ({
@@ -19,6 +20,7 @@ export const useChatLeftSideStore = create((set) => ({
       Settings: false,
       Group: false,
       openChatForSmallScreen: false,
+      otherUsersProfileActive: false,
     })),
   setChats: () =>
     set((state) => ({
@@ -29,6 +31,7 @@ export const useChatLeftSideStore = create((set) => ({
       Settings: false,
       Group: false,
       openChatForSmallScreen: false,
+      otherUsersProfileActive: false,
     })),
   setContacts: () =>
     set((state) => ({
@@ -39,6 +42,7 @@ export const useChatLeftSideStore = create((set) => ({
       Settings: false,
       Group: false,
       openChatForSmallScreen: false,
+      otherUsersProfileActive: false,
     })),
   setSettings: () =>
     set((state) => ({
@@ -49,6 +53,7 @@ export const useChatLeftSideStore = create((set) => ({
       Contacts: false,
       Group: false,
       openChatForSmallScreen: false,
+      otherUsersProfileActive: false,
     })),
 
   setGroup: () =>
@@ -60,6 +65,7 @@ export const useChatLeftSideStore = create((set) => ({
       Chats: false,
       Contacts: false,
       openChatForSmallScreen: false,
+      otherUsersProfileActive: false,
     })),
   setOpenChatForSmallScreen: () =>
     set((state) => ({
@@ -70,39 +76,28 @@ export const useChatLeftSideStore = create((set) => ({
       Profile: false,
       Chats: false,
       Contacts: false,
+      otherUsersProfileActive: false,
     })),
   setCloseChatForSmallScreen: () =>
     set((state) => ({
       ...state,
       Chats: true,
       openChatForSmallScreen: false,
+      otherUsersProfileActive: false,
       Group: false,
       Settings: false,
       Profile: false,
       Contacts: false,
     })),
-}));
-
-interface ModalState {
-  show: boolean;
-  onHide: () => void;
-  handleClose: () => void;
-  handleShow: () => void;
-}
-//@ts-ignore
-export const useModalStore = create<ModalState>((set) => ({
-  show: false,
-  onHide: () =>
-    set(() => ({
-      show: false,
+  setOtherUsersProfileActive: () =>
+    set((state) => ({
+      ...state,
+      otherUsersProfileActive: true,
     })),
-  handleClose: () =>
-    set(() => ({
-      show: false,
-    })),
-  handleShow: () =>
-    set(() => ({
-      show: true,
+  setOtherUsersProfileClose: () =>
+    set((state) => ({
+      ...state,
+      otherUsersProfileActive: false,
     })),
 }));
 

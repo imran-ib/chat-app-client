@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { useConversationStore } from "components/ChatComponents/ChatState";
 import styled from "styled-components";
-import Moment from "react-moment";
-import { SRLWrapper } from "simple-react-lightbox";
-import { Messages, User } from "generated/graphql";
-import ReactButton from "./Reactions";
-import ChatInput from "../Input";
+import {
+  Messages,
+  User,
+  useRestoreDeletedChatMutation,
+} from "generated/graphql";
+import MessagesComponent from "./Message";
+import ImageMessage from "./Image";
+import ModalComponent from "components/utils/Models/Modal";
+import { useModalStore } from "components/ChatComponents/ChatState/ModalState";
+import FriendListModal from "./FriendsListModal";
+import { Alert } from "react-bootstrap";
+import { useUser } from "components/Auth/Auth";
+
 
 const ConversationStyles = styled.div`
   /* height: 600px; */
@@ -27,16 +35,67 @@ const ConversationStyles = styled.div`
 `;
 
 const Conversation = () => {
-  // const [Messages, setMessages] = useState(null);
-
+  const dispatch = useConversationStore((state) => state.dispatch);
+ 
+  const CurrentUser = useUser();
+  const [CurrentMessage, setCurrentMessage] = useState();
+  const show = useModalStore((state) => state.showFriendsListModal);
+  const [
+    RestoreDeletedChat,
+    { data, loading, error, called },
+  ] = useRestoreDeletedChatMutation({
+    onCompleted: (data) => {
+      //@ts-ignore
+      dispatch({
+        type: "USER_CHAT_BLOCKED_STATUS",
+        payload: { status: null },
+      });
+    },
+  });
+  const onHide = useModalStore((state) => state.onHideFriendsListModal);
   const user: User | any = useConversationStore((state) => state.user);
   const Messages: Messages | any = useConversationStore(
     (state) => state.messages
   );
+  const GetUsersBlockedStatusData = useConversationStore(
+    (state) => state.GetUsersBlockedStatusData
+  );
+
   if (!Messages || !Messages.length || !user) return <p></p>;
+
+  if (!loading && !error && called && data) {
+    //@ts-ignore
+    dispatch({
+      type: "SET_MESSAGES",
+      payload: { messages: data?.RestoreDeletedChat },
+    });
+  }
+
+ 
 
   return (
     <>
+      <ModalComponent show={show} onHide={onHide}>
+        <FriendListModal CurrentMessage={CurrentMessage} />
+      </ModalComponent>
+      {GetUsersBlockedStatusData && (
+        <Alert
+          onClick={() => {
+            RestoreDeletedChat({
+              variables: {
+                //@ts-ignore
+                blocker: CurrentUser?.id,
+                blockee: user.id,
+              },
+            });
+          }}
+          className="text-center"
+          variant="info"
+        >
+          Load Old Messages
+        </Alert>
+      )}
+
       <ConversationStyles
         className="chat-conversation p-3 p-lg-4"
         data-simplebar="init"
@@ -48,191 +107,22 @@ const Conversation = () => {
           {Messages?.map((chat: any, i: number) => (
             <div key={i}>
               {!chat.image && (
-                <li className={user?.id === chat.SenderId ? "" : "right"}>
-                  <div className="conversation-list">
-                    <div className="chat-avatar">
-                      {chat.SenderId === user.id && (
-                        <img src={user?.avatar} alt="" />
-                      )}
-                      {/* 
-                          //@ts-ignore */}
-                      {chat.SenderId !== user.id && (
-                        // @ts-ignore
-                        <img src={chat.from?.avatar} alt="" />
-                      )}
-                    </div>
-
-                    <div className="user-chat-content postilion-relative">
-                      <div className="ctext-wrap">
-                        <div className="ctext-wrap-content">
-                          <p className="mb-0">{chat.content}</p>
-                          <p className="chat-time mb-0">
-                            <i className="ri-time-line align-middle"></i>
-                            <span className="align-middle">
-                              {" "}
-                              <Moment date={chat.createdAt} fromNow />{" "}
-                            </span>
-                          </p>
-                        </div>
-                        {chat.reactions?.length &&
-                          chat.reactions?.map((reaction: any, i: number) => (
-                            <i
-                              key={i}
-                              style={{
-                                position: "absolute",
-                                fontSize: "1.5rem",
-                                bottom: "1.2rem",
-                                right: "4.5rem",
-                              }}
-                            >
-                              {[
-                                ...new Set(
-                                  chat.reactions?.map((r: any) => r.content)
-                                ),
-                              ]}
-                              <span className="text-white">
-                                {" "}
-                                {chat.reactions.length && chat.reactions.length}
-                              </span>
-                            </i>
-                          ))}
-                        <div className="dropdown align-self-start">
-                          <div className="d-flex flex-column justify-content-between align-items-center">
-                            <a>
-                              <i className="ri-more-2-fill"></i>
-                            </a>
-                            <ReactButton MessageId={chat.id} />
-                          </div>
-
-                          <div className="dropdown-menu">
-                            <a className="dropdown-item" href="#">
-                              Copy
-                              <i className="ri-file-copy-line float-right text-muted"></i>
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Save
-                              <i className="ri-save-line float-right text-muted"></i>
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Forward
-                              <i className="ri-chat-forward-line float-right text-muted"></i>
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Delete
-                              <i className="ri-delete-bin-line float-right text-muted"></i>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="conversation-name">
-                        {user?.id === chat.SenderId && chat.from?.username}
-                      </div>
-                    </div>
-                  </div>
-                </li>
+                <MessagesComponent
+                  setCurrentMessage={setCurrentMessage}
+                  right={user.id === chat.SenderId}
+                  chat={chat}
+                  user={user}
+                  i={i}
+                />
               )}
               {/* image */}
               {chat.image && (
-                <li className={user?.id === chat.SenderId ? "" : "right"}>
-                  <div className="conversation-list">
-                    <div className="chat-avatar">
-                      {chat.SenderId === user.id && (
-                        <img src={user?.avatar} alt="" />
-                      )}
-                      {/* 
-                          //@ts-ignore */}
-                      {chat.SenderId !== user.id && (
-                        // @ts-ignore
-                        <img src={chat.from?.avatar} alt="" />
-                      )}
-                    </div>
-                    <div className="user-chat-content">
-                      <div className="ctext-wrap">
-                        <div className="ctext-wrap-content">
-                          <ul className="list-inline message-img mb-0">
-                            <li className="list-inline-item message-img-list">
-                              <div>
-                                <SRLWrapper>
-                                  <img
-                                    src={chat.image}
-                                    alt={chat.from.username}
-                                    className="rounded border"
-                                  />
-                                </SRLWrapper>
-                              </div>
-                              {chat.reactions?.length &&
-                                chat.reactions?.map(
-                                  (reaction: any, i: number) => (
-                                    <i
-                                      key={i}
-                                      style={{
-                                        position: "absolute",
-                                        fontSize: "2.5rem",
-                                        bottom: "0.2rem",
-                                        right: "-4rem",
-                                      }}
-                                    >
-                                      {[
-                                        ...new Set(
-                                          chat.reactions?.map(
-                                            (r: any) => r.content
-                                          )
-                                        ),
-                                      ]}
-                                      <span className="text-white">
-                                        {" "}
-                                        {chat.reactions.length >= 1 &&
-                                          chat.reactions.length}
-                                      </span>
-                                    </i>
-                                  )
-                                )}
-                            </li>
-                          </ul>
-                          <p className="chat-time mb-0">
-                            <i className="ri-time-line align-middle"></i>
-                            <span className="align-middle">
-                              {" "}
-                              <Moment date={chat.createdAt} fromNow />{" "}
-                            </span>
-                          </p>
-                        </div>
-
-                        <div className="dropdown align-self-start">
-                          <div className="d-flex flex-column justify-content-between align-items-center">
-                            <a>
-                              <i className="ri-more-2-fill"></i>
-                            </a>
-                            <ReactButton MessageId={chat.id} />
-                          </div>
-
-                          <div className="dropdown-menu">
-                            <a className="dropdown-item" href="#">
-                              Copy
-                              <i className="ri-file-copy-line float-right text-muted"></i>
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Save
-                              <i className="ri-save-line float-right text-muted"></i>
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Forward
-                              <i className="ri-chat-forward-line float-right text-muted"></i>
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Delete
-                              <i className="ri-delete-bin-line float-right text-muted"></i>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="conversation-name">
-                        {user?.id === chat.SenderId && chat.from?.username}
-                      </div>
-                    </div>
-                  </div>
-                </li>
+                <ImageMessage
+                  setCurrentMessage={setCurrentMessage}
+                  chat={chat}
+                  user={user}
+                  i={i}
+                />
               )}
             </div>
           ))}

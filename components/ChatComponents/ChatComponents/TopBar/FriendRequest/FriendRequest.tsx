@@ -5,7 +5,8 @@ import { useConversationStore } from "components/ChatComponents/ChatState";
 import {
   useConfirmFriendRequestMutation,
   useGetFriendRequestsLazyQuery,
-  useFriendsQuery,
+  FriendsDocument,
+  useAddFriendMutation
 } from "generated/graphql";
 import TooltipComponent from "components/utils/Tooltip/Tootip";
 import { toast } from "react-toastify";
@@ -13,10 +14,12 @@ import { toast } from "react-toastify";
 const FriendRequest = () => {
   const requests = useConversationStore((state) => state.request);
   const dispatch = useConversationStore((state) => state.dispatch);
+
   const [ConfirmFriendRequest, { loading }] = useConfirmFriendRequestMutation({
     onCompleted: () => {
       toast.success(`New Friend Added`);
     },
+    refetchQueries: [{ query: FriendsDocument }],
   });
 
   const [GetFriendRequests] = useGetFriendRequestsLazyQuery({
@@ -44,7 +47,9 @@ const FriendRequest = () => {
               <Dropdown.Toggle id="dropdown-custom-components">
                 <Badge pill variant="primary">
                   <Icon className="ri-user-2-line">
-                    <Number> 1 </Number>{" "}
+                    {/* 
+                    //@ts-ignore */}
+                    <Number> {requests?.length}</Number>{" "}
                   </Icon>
                 </Badge>
               </Dropdown.Toggle>
@@ -68,7 +73,14 @@ const FriendRequest = () => {
                             ConfirmFriendRequest({
                               variables: {
                                 id: req.id,
+                                FriendId: req.sender.id,
                               },
+                            }).then(() => {
+                              //@ts-ignore
+                              dispatch({
+                                type: "REMOVE_FRIEND_REQUEST_NOTIFICATION",
+                                payload: { ReqId: req.id },
+                              });
                             })
                           }
                           className="confirm m-2 text-primary "

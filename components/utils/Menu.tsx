@@ -17,6 +17,7 @@ export const DotMenuStyle = styled.div`
       margin-bottom: 1rem;
     }
   }
+  
   /* remove bootstrap default dropdown caret icon  */
   .dropdown-toggle {
     & ::after {

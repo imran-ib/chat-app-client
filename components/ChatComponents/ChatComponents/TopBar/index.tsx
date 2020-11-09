@@ -7,13 +7,9 @@ import { User } from "generated/graphql";
 import { useUser } from "components/Auth/Auth";
 import AddFriend from "./AddFriendButton/AddFriend";
 import FriendRequest from "./FriendRequest/FriendRequest";
+import Menu from "./Menu/Menu";
 
-interface Props {
-  ToggleOtherUser: boolean;
-  setToggleOtherUser: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const TopBar: React.FC<Props> = ({ ToggleOtherUser, setToggleOtherUser }) => {
+const TopBar: React.FC<any> = () => {
   const CurrentUser = useUser();
   let user: User | any = useConversationStore((state) => state.user);
   const setCloseChatForSmallScreen: any = useChatLeftSideStore(
@@ -56,6 +52,9 @@ const TopBar: React.FC<Props> = ({ ToggleOtherUser, setToggleOtherUser }) => {
       <div className="col-sm-8 col-4">
         <ul className="list-inline user-chat-nav text-right d-flex justify-content-end align-items-center ">
           <li className="list-inline-item">
+            <i className="ri-notification-2-fill mt-2 mr-3"></i>
+          </li>
+          <li className="list-inline-item">
             <FriendRequest />
           </li>
 
@@ -63,40 +62,7 @@ const TopBar: React.FC<Props> = ({ ToggleOtherUser, setToggleOtherUser }) => {
             <AddFriend />
           </li>
 
-          <li className="list-inline-item">
-            <div className="dropdown">
-              <button
-                className="btn nav-btn "
-                type="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="true"
-              >
-                <i className="ri-more-fill mt-2"></i>
-              </button>
-              <div className="dropdown-menu dropdown-menu-right">
-                <a
-                  onClick={() => setToggleOtherUser(!ToggleOtherUser)}
-                  className="dropdown-item d-block d-lg-none user-profile-show"
-                >
-                  View profile
-                  <i className="ri-user-2-line float-right text-muted"></i>
-                </a>
-                <a className="dropdown-item" href="#">
-                  Archive
-                  <i className="ri-archive-line float-right text-muted"></i>
-                </a>
-                <a className="dropdown-item" href="#">
-                  Muted
-                  <i className="ri-volume-mute-line float-right text-muted"></i>
-                </a>
-                <a className="dropdown-item" href="#">
-                  Delete
-                  <i className="ri-delete-bin-line float-right text-muted"></i>
-                </a>
-              </div>
-            </div>
-          </li>
+          <Menu CurrentUser={CurrentUser} otherUser={user} />
         </ul>
       </div>
     </>

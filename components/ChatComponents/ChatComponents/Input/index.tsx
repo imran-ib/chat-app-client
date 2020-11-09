@@ -21,6 +21,7 @@ const ChatInput = () => {
   const user = useUser();
   const ref = useRef();
   const inputFile = useRef(null);
+  // this should be send messages not get message
   const [getMessage, { loading, error }] = useSendMessageMutation();
   useOnClickOutside(ref, () => SetEmojiPicker(false));
   const { innerWidth } = useWindowSize();

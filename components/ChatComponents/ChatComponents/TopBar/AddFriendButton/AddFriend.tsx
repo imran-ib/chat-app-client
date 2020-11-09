@@ -1,12 +1,12 @@
 import React from "react";
-import { useModalStore } from "components/ChatComponents/ChatState";
+import { useModalStore } from "components/ChatComponents/ChatState/ModalState";
 import AddFriendForm from "./AddFriendForm";
 import ModalComponent from "components/utils/Models/Modal";
 import TooltipComponent from "components/utils/Tooltip/Tootip";
 
 const AddFriend = () => {
   const show = useModalStore((state) => state.show);
-  const handleClose = useModalStore((state) => state.handleClose);
+  // const handleClose = useModalStore((state) => state.handleClose);
   const handleShow = useModalStore((state) => state.handleShow);
   const onHide = useModalStore((state) => state.onHide);
   return (

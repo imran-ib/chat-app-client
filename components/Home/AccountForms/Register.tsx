@@ -10,6 +10,8 @@ import { useCreateUserMutation, useCurrentUserQuery } from "generated/graphql";
 import Alert from "react-bootstrap/Alert";
 import { useAuthStore } from "components/Auth/Auth";
 import GoogleAuth from "./GoogleAuth";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 type FormValues = {
   email: string;
@@ -21,12 +23,13 @@ type FormValues = {
 const Register = () => {
   const { register, handleSubmit, errors } = useForm<FormValues>();
   const state = useStore();
+  const Router = useRouter();
 
   const dispatch = useAuthStore((state) => state.dispatch);
   const {
     data,
     loading: UserLoading,
-    error: userError,
+    error: UserError,
     called,
     refetch,
   } = useCurrentUserQuery();
@@ -34,7 +37,7 @@ const Register = () => {
     onCompleted: (data) => {
       // @ts-ignore
       dispatch({ type: "Login", payload: data?.CreateUser });
-      if (data && !UserLoading && !userError && called) refetch();
+      toast.success(`New Account is Created and You  are logged in 🙂`);
     },
   });
 
@@ -54,6 +57,11 @@ const Register = () => {
         username,
         password,
       },
+    }).then(() => {
+      Router.push({
+        pathname: "/chat",
+      });
+      if (data && !UserLoading && !UserError && called) refetch();
     });
   };
 

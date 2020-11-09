@@ -6,8 +6,6 @@ import OtherUserProfile from "./OtherUserProfile";
 import TopBar from "./TopBar";
 
 const ChatComponents = () => {
-  //TODO Move this Chat State
-  const [ToggleOtherUser, setToggleOtherUser] = useState();
   const openChatForSmallScreen = useChatLeftSideStore(
     (state) => state.openChatForSmallScreen
   );
@@ -25,10 +23,7 @@ const ChatComponents = () => {
         <div className="w-100 position-relative">
           <div className="p-3 p-lg-4 border-bottom">
             <div className="row align-items-center">
-              <TopBar
-                setToggleOtherUser={setToggleOtherUser}
-                ToggleOtherUser={ToggleOtherUser}
-              />
+              <TopBar />
             </div>
           </div>
 
@@ -37,8 +32,7 @@ const ChatComponents = () => {
           <ChatInput />
         </div>
         <OtherUserProfile
-          setToggleOtherUser={setToggleOtherUser}
-          ToggleOtherUser={ToggleOtherUser}
+       
         />
       </div>
     </div>

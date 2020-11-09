@@ -25,6 +25,7 @@ export const GetMessages = gql`
       isSenderFriend
       isSenderFollowing
       ReceiverId
+      forwarded
       SenderId
       createdAt
       updatedAt
@@ -40,6 +41,24 @@ export const SendMessage = gql`
     $image: String = "No Image to display"
   ) {
     SendMessage(
+      Sender: $Sender
+      Receiver: $Receiver
+      content: $content
+      image: $image
+    ) {
+      id
+      content
+    }
+  }
+`;
+export const ForwardMessage = gql`
+  mutation ForwardMessage(
+    $Sender: String!
+    $Receiver: String!
+    $content: String = "Empty Message"
+    $image: String = "No Image to display"
+  ) {
+    ForwardMessage(
       Sender: $Sender
       Receiver: $Receiver
       content: $content
@@ -84,6 +103,14 @@ export const NewMessage = gql`
   }
 `;
 
+export const DeleteMessageSubscription = gql`
+  subscription DeleteMessageSubscription {
+    DeleteMessageSub {
+      id
+    }
+  }
+`;
+
 export const Reaction = gql`
   mutation Reaction($messageId: Int!, $content: String!) {
     CreateReaction(messageId: $messageId, content: $content) {
@@ -102,6 +129,88 @@ export const ReactionToMessage = gql`
       userId
       messageId
       createdAt
+    }
+  }
+`;
+
+export const DeleteMessage = gql`
+  mutation DeleteMessage($MessageId: Int!) {
+    DeleteMessage(MessageId: $MessageId)
+  }
+`;
+
+export const DeleteChat = gql`
+  mutation DeleteChat($blockerId: Int!, $blockeeId: Int!) {
+    DeleteChat(blockerId: $blockerId, blockeeId: $blockeeId)
+  }
+`;
+
+export const GetChats = gql`
+  query GetChats {
+    GetChats {
+      friend{
+      id
+      username
+      email
+      avatar
+      isActive
+      lastSeen
+      MessagesRecieved(last: 1) {
+        id
+        ReceiverId
+        SenderId
+        content
+        createdAt
+      }
+      MessagesSent(last: 1) {
+        id
+        ReceiverId
+        SenderId
+        content
+        createdAt
+      }
+      }
+    }
+  }
+`;
+
+export const GetUsersBlockedStatus = gql`
+  query GetUsersBlockedStatus($username: String!) {
+    GetUsersBlockedStatus(username: $username) {
+      id
+    }
+  }
+`;
+
+export const RestoreDeletedChat = gql`
+  mutation RestoreDeletedChat($blocker: Int!, $blockee: Int!) {
+    RestoreDeletedChat(blocker: $blocker, blockee: $blockee) {
+      id
+      content
+      from {
+        id
+        username
+        avatar
+      }
+      to {
+        id
+        username
+        avatar
+      }
+      reactions {
+        content
+        userId
+        messageId
+        createdAt
+      }
+      image
+      isSenderFriend
+      isSenderFollowing
+      ReceiverId
+      forwarded
+      SenderId
+      createdAt
+      updatedAt
     }
   }
 `;

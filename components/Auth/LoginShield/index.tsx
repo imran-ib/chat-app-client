@@ -13,6 +13,7 @@ import {
 import { useAuthStore } from "components/Auth/Auth";
 import { useRouter } from "next/router";
 import { customMedia } from "components/styles/Global";
+import { useStore } from "components/Home/HomeState";
 
 type FormValues = {
   emailOrUsername: string;
@@ -20,13 +21,14 @@ type FormValues = {
 };
 
 const LoginShield: React.FC<any> = () => {
+  const state = useStore();
   const Router = useRouter();
   const dispatch = useAuthStore((state) => state.dispatch);
   const [PasswordLogin, { loading, error }] = usePasswordLoginMutation({
     onCompleted: (data) => {
       // @ts-ignore
       dispatch({ type: "Login", payload: data?.PasswordLogin });
-      Router.push("/user/chat");
+      Router.push("/chat");
     },
   });
   const {
@@ -104,7 +106,15 @@ const LoginShield: React.FC<any> = () => {
         <p className="form-footer-text">
           Don't Have An Account? {/* 
           //@ts-ignore */}
-          <a onClick={() => Router.push("/")}>Register</a>{" "}
+          <a
+            onClick={() => {
+              Router.push("/");
+              // @ts-ignore
+              state.setShowRegister();
+            }}
+          >
+            Register
+          </a>{" "}
         </p>
       </Form>
     </LoginStyles>

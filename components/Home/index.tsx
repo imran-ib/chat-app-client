@@ -42,7 +42,7 @@ const Home = () => {
   const state = useStore();
   const user = useUser();
   const Router = useRouter();
-  if (user) Router.push("/user/profile");
+  if (user) Router.push("/chat");
   return (
     <Container>
       <Row>

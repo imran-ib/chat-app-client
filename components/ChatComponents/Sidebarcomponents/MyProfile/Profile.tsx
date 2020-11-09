@@ -12,6 +12,7 @@ const Profile = () => {
   // Call hook passing in the ref and a function to call on outside click
   const [ProfileEdit, setProfileEdit] = useState(false);
   useOnClickOutside(ref, () => setProfileEdit(false));
+
   return (
     <ProfileStyles className="chat-leftsidebar mr-lg-1">
       <div className="tab-content">
@@ -218,6 +219,11 @@ const DropDownMenu = styled.div`
   }
 `;
 const AboutSection = styled.div`
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: baseline;
   height: calc(100vh - 50rem);
   ${customMedia.lessThan("small")`
   height: calc(100vh - 30rem);

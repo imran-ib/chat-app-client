@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, OverlayTrigger, Popover, Spinner } from "react-bootstrap";
 import styled from "styled-components";
-import { useReactionMutation, GetMessagesDocument } from "generated/graphql";
+import { useReactionMutation } from "generated/graphql";
 
 interface Props {
   MessageId: number | any;
