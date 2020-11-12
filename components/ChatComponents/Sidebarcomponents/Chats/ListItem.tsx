@@ -2,6 +2,7 @@ import React from "react";
 import {
   useGetMessagesLazyQuery,
   useGetUsersBlockedStatusLazyQuery,
+  useOtherUserQuery,
 } from "generated/graphql";
 import {
   useConversationStore,
@@ -9,15 +10,31 @@ import {
 } from "components/ChatComponents/ChatState";
 import useWindowSize from "@rooks/use-window-size";
 import Moment from "react-moment";
+import moment from "moment";
+import { ChatSpinner } from "components/utils/Spinners/ChatSidebarSpinners";
 
-const ListItem = ({ user }: any) => {
+const ListItem = ({ user: USER }: any) => {
   //   const user: User | any = useUser();
+  const { loading, data } = useOtherUserQuery({
+    variables: {
+      userId: USER.id,
+    },
+    fetchPolicy: "no-cache",
+    pollInterval: 5000,
+  });
+
   const dispatch = useConversationStore((state) => state.dispatch);
   const messages: any = useConversationStore((state) => state.messages);
-
   const setOpenChatForSmallScreen: any = useChatLeftSideStore(
     (state) => state.setOpenChatForSmallScreen
   );
+  const newMessagePillShow = useChatLeftSideStore(
+    (state) => state.newMessagePillShow
+  );
+  const setnewMessagePillHide = useChatLeftSideStore(
+    (state) => state.setnewMessagePillHide
+  );
+
   const { innerWidth } = useWindowSize();
   const IsSmallScreen = innerWidth <= 941;
 
@@ -41,12 +58,31 @@ const ListItem = ({ user }: any) => {
         payload: { messages: data.GetMessages },
       });
       if (data && IsSmallScreen) setOpenChatForSmallScreen();
+      //@ts-ignore
+      setnewMessagePillHide();
     },
   });
 
   const LastMessageIndex = messages.length && messages.length - 1;
   const LastMessage = messages[LastMessageIndex];
 
+  // NOTE 'user-status' class is responsible for green online status dot
+  if (loading) return <ChatSpinner />;
+  const user: any = data?.OtherUser;
+
+  const LastSeen = moment(user?.lastSeen).unix() * 100;
+  const currentTime = moment(new Date().toISOString()).unix() * 100;
+
+  const Difference = currentTime - LastSeen;
+  let Online;
+  let active = false;
+  if (Difference <= 5000) {
+    Online = "online";
+    active = true;
+  } else {
+    active = false;
+    Online = <Moment date={user?.lastSeen} fromNow />;
+  }
 
   return (
     <li
@@ -73,7 +109,7 @@ const ListItem = ({ user }: any) => {
               className="rounded-circle avatar-xs"
               alt="user image"
             />
-            <span className="user-status"></span>
+            {active && <span className="user-status"></span>}
           </div>
 
           <div className="media-body overflow-hidden">
@@ -93,9 +129,20 @@ const ListItem = ({ user }: any) => {
               ""
             )}
           </div>
+          {newMessagePillShow && LastMessage?.SenderId === user.id && (
+            <NotificationPill />
+          )}
         </div>
       </a>
     </li>
+  );
+};
+
+const NotificationPill: React.FC<any> = () => {
+  return (
+    <div className="unread-message">
+      <span className="badge badge-soft-danger badge-pill">New</span>
+    </div>
   );
 };
 

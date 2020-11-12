@@ -10,6 +10,7 @@ export const useChatLeftSideStore = create((set) => ({
   Group: false,
   openChatForSmallScreen: false,
   otherUsersProfileActive: false,
+  newMessagePillShow: false,
 
   setProfile: () =>
     set((state) => ({
@@ -98,6 +99,16 @@ export const useChatLeftSideStore = create((set) => ({
     set((state) => ({
       ...state,
       otherUsersProfileActive: false,
+    })),
+  setnewMessagePillShow: () =>
+    set((state) => ({
+      ...state,
+      newMessagePillShow: true,
+    })),
+  setnewMessagePillHide: () =>
+    set((state) => ({
+      ...state,
+      newMessagePillShow: false,
     })),
 }));
 

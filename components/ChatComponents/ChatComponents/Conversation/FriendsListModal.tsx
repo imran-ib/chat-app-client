@@ -30,7 +30,6 @@ const FriendListModal: React.FC<Props> = ({ CurrentMessage }) => {
   const [ForwardMessage, { loading, error }] = useForwardMessageMutation();
   const { innerWidth } = useWindowSize();
   const IsSmallScreen = innerWidth <= 941;
-
   const [GetMessages] = useGetMessagesLazyQuery({
     onCompleted: (data) => {
       //@ts-ignore
@@ -43,6 +42,7 @@ const FriendListModal: React.FC<Props> = ({ CurrentMessage }) => {
   });
 
   if (!Friends.length) return <p>No User Found</p>;
+
   if (loading) return <ChatSpinner />;
 
   if (error)

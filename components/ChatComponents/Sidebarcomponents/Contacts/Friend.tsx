@@ -53,7 +53,7 @@ const Friend: React.FC<Props> = ({ friend }) => {
           //@ts-ignore */}
       <div ref={ref} className="media align-items-center position-relative">
         <div className="media-body">
-          <h5 className="font-size-14 m-0">{friend?.username}</h5>
+          <h5 className="font-size-16 m-0">{friend?.username}</h5>
         </div>
 
         <div>
@@ -62,7 +62,6 @@ const Friend: React.FC<Props> = ({ friend }) => {
               e.stopPropagation();
               setShow(!Show);
             }}
-            href="#"
             className="text-muted "
             data-toggle="dropdown"
             aria-haspopup="true"

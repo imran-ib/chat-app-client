@@ -10,6 +10,7 @@ export const Users = gql`
       email
       avatar
       isActive
+      lastTyped
       lastSeen
     }
   }
@@ -23,6 +24,7 @@ export const Friends = gql`
         email
         avatar
         isActive
+        lastTyped
         lastSeen
         MessagesRecieved(last: 1) {
           id
@@ -51,6 +53,7 @@ export const CurrentUser = gql`
       email
       avatar
       isActive
+      lastTyped
       lastSeen
     }
   }
@@ -65,6 +68,8 @@ export const CreateUser = gql`
         username
         avatar
         email
+        lastTyped
+        lastSeen
       }
     }
   }
@@ -77,6 +82,8 @@ export const PasswordLogin = gql`
       user {
         id
         email
+        lastTyped
+        lastSeen
       }
     }
   }
@@ -96,6 +103,8 @@ export const VerifyOPT = gql`
         id
         avatar
         username
+        lastTyped
+        lastSeen
       }
     }
   }
@@ -146,6 +155,8 @@ export const GetUsers = gql`
       id
       username
       avatar
+      lastTyped
+      lastSeen
     }
   }
 `;
@@ -191,5 +202,26 @@ export const GetFriendRequests = gql`
 export const RemoveFriend = gql`
   mutation RemoveFriend($FriendId: Int!) {
     RemoverFriend(FriendId: $FriendId)
+  }
+`;
+
+export const LastSeen = gql`
+  mutation LastSeen {
+    UserLastSeen
+  }
+`;
+
+export const OtherUser = gql`
+  query OtherUser($userId: Int!) {
+    OtherUser(userId: $userId) {
+      id
+      username
+      avatar
+      email
+      isActive
+      lastSeen
+      lastTyped
+      isActive
+    }
   }
 `;

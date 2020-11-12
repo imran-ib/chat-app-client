@@ -5,6 +5,7 @@ import {
 } from "components/ChatComponents/ChatState";
 import { User } from "generated/graphql";
 import { useUser } from "components/Auth/Auth";
+import LastSeenComponent from "components/ChatComponents/Sidebarcomponents/MyProfile/UserLastSeen";
 
 const OtherUserProfile: React.FC<any> = () => {
   const CurrentUser = useUser();
@@ -53,10 +54,7 @@ const OtherUserProfile: React.FC<any> = () => {
         </div>
 
         <h5 className="font-size-16 mb-1 text-truncate">{user.username}</h5>
-        <p className="text-muted text-truncate mb-1">
-          <i className="ri-record-circle-fill font-size-10 text-success mr-1"></i>
-          Active
-        </p>
+        <LastSeenComponent user={user} />
       </div>
       {/* <!-- End profile user --> */}
 

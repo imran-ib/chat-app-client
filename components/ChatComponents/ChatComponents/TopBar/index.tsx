@@ -8,6 +8,8 @@ import { useUser } from "components/Auth/Auth";
 import AddFriend from "./AddFriendButton/AddFriend";
 import FriendRequest from "./FriendRequest/FriendRequest";
 import Menu from "./Menu/Menu";
+import LastSeenComponent from "components/ChatComponents/Sidebarcomponents/MyProfile/UserLastSeen";
+import active from "../";
 
 const TopBar: React.FC<any> = () => {
   const CurrentUser = useUser();
@@ -15,9 +17,8 @@ const TopBar: React.FC<any> = () => {
   const setCloseChatForSmallScreen: any = useChatLeftSideStore(
     (state) => state.setCloseChatForSmallScreen
   );
-  if (!user) {
-    user = CurrentUser;
-  }
+  if (!user) return <span></span>;
+
   return (
     <>
       <div className="col-sm-4 col-8">
@@ -42,9 +43,11 @@ const TopBar: React.FC<any> = () => {
               <a href="#" className="text-reset user-profile-show">
                 {user?.username}
               </a>
-              <i className="ri-record-circle-fill font-size-10 text-success d-inline-block ml-1"></i>
             </h5>
           </div>
+        </div>
+        <div className="ml-5">
+          <LastSeenComponent user={user} />
         </div>
       </div>
       {/*  */}

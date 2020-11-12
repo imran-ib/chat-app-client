@@ -13,6 +13,7 @@ const useNotification = () => {
   let SenderId;
   let content;
   let Notify;
+  let OtherUser
   if (NewMessageNotification !== null) {
     //@ts-ignore
     username = NewMessageNotification?.from?.username;
@@ -22,8 +23,10 @@ const useNotification = () => {
     content = NewMessageNotification?.content;
     //@ts-ignore
     Notify = CurrentUser.id !== SenderId;
+    //@ts-ignore
+OtherUser = NewMessageNotification?.from
   }
 
-  return { Notify, username, SenderId, content };
+  return { Notify, username, SenderId, content,OtherUser };
 };
 export default useNotification;

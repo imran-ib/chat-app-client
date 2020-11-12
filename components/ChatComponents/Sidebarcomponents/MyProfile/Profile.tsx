@@ -4,11 +4,13 @@ import styled from "styled-components";
 import { useOnClickOutside } from "components/utils/hooks/useClickOutside";
 import { SRLWrapper } from "simple-react-lightbox";
 import { customMedia } from "components/styles/Global";
+import LastSeenComponent from "./UserLastSeen";
 
 const Profile = () => {
   // Create a ref that we add to the element for which we want to detect outside clicks
   const ref = useRef();
   const user = useUser();
+  console.log("Profile -> user", user);
   // Call hook passing in the ref and a function to call on outside click
   const [ProfileEdit, setProfileEdit] = useState(false);
   useOnClickOutside(ref, () => setProfileEdit(false));
@@ -77,10 +79,8 @@ const Profile = () => {
             <h5 className="font-size-16 mb-1 text-truncate">
               {user?.username}
             </h5>
-            <p className="text-muted text-truncate mb-1">
-              <i className="ri-record-circle-fill font-size-10 text-success mr-1 d-inline-block"></i>
-              Active
-            </p>
+
+            <LastSeenComponent user={user} />
           </div>
           {/* End profile user  */}
 

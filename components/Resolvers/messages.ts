@@ -148,27 +148,28 @@ export const DeleteChat = gql`
 export const GetChats = gql`
   query GetChats {
     GetChats {
-      friend{
-      id
-      username
-      email
-      avatar
-      isActive
-      lastSeen
-      MessagesRecieved(last: 1) {
+      friend {
         id
-        ReceiverId
-        SenderId
-        content
-        createdAt
-      }
-      MessagesSent(last: 1) {
-        id
-        ReceiverId
-        SenderId
-        content
-        createdAt
-      }
+        username
+        email
+        avatar
+        isActive
+        lastTyped
+        lastSeen
+        MessagesRecieved(last: 1) {
+          id
+          ReceiverId
+          SenderId
+          content
+          createdAt
+        }
+        MessagesSent(last: 1) {
+          id
+          ReceiverId
+          SenderId
+          content
+          createdAt
+        }
       }
     }
   }

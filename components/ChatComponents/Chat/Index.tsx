@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import SideBarComponent from "../Sidebarcomponents";
 import ChatComponents from "../ChatComponents";
 import {
@@ -7,18 +7,26 @@ import {
   useReactionToMessageSubscription,
   useFriendRequestSubSubscription,
   useDeleteMessageSubscriptionSubscription,
+  useLastSeenMutation,
 } from "generated/graphql";
-import { useConversationStore } from "components/ChatComponents/ChatState";
+import {
+  useConversationStore,
+  useChatLeftSideStore,
+} from "components/ChatComponents/ChatState";
 import { toast } from "react-toastify";
 import useNotification from "components/utils/hooks/useNotification";
 
 const Chat = () => {
-  const { Notify, username, SenderId, content } = useNotification();
+  const { Notify, username, SenderId, content, OtherUser } = useNotification();
+  const [onlineIndicator, setOnlineIndicator] = useState(0);
   const user = useConversationStore((state) => state.user);
-
+  const setnewMessagePillShow = useChatLeftSideStore(
+    (state) => state.setnewMessagePillShow
+  );
   const dispatch = useConversationStore((state) => state.dispatch);
   //@ts-ignore
   const Messages: Messages[] = useConversationStore((state) => state.messages);
+  const [UserLastSeen] = useLastSeenMutation();
 
   const { data, loading } = useNewMessageSubscription({
     // New Message Notification To User if The Chat is Not open
@@ -48,6 +56,15 @@ const Chat = () => {
       toast.info("New Friend Request");
     },
   });
+  useEffect(() => {
+    UserLastSeen();
+    //Send Mutation Every 30 Seconds
+    setOnlineIndicator(setInterval(() => UserLastSeen(), 5000));
+    return () => {
+      // Clean up
+      clearInterval(onlineIndicator);
+    };
+  }, []);
 
   useEffect(() => {
     !ReqLoading &&
@@ -96,10 +113,17 @@ const Chat = () => {
   }, [MessageId]);
 
   if (Notify) {
-    // User is same user from top bar (if sender is same use with whom we are chatting then don't send notification)
+    // User is same user from top bar (if sender is same user with whom we are chatting then don't send notification)
     //@ts-ignore
     if (SenderId !== user?.id) {
-      toast.success(`A New Message From ${username}  "${content}"`);
+      toast.success(`A New Message From ${username}  "${content}"`, {
+        onClick: () => {
+          //@ts-ignore
+          dispatch({ type: "SET_USER", payload: { user: OtherUser } });
+        },
+      });
+      //@ts-ignore
+      setnewMessagePillShow();
       //@ts-ignore
       dispatch({
         type: "NEW_MESSAGE_NOTIFICATION",

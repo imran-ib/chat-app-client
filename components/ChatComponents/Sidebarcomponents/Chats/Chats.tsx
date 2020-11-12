@@ -11,6 +11,8 @@ const Chats = () => {
   const { data, loading: ChatLoading } = useGetChatsQuery();
   if (ChatLoading) return <ChatSidebarSpinner />;
   const chats = data?.GetChats?.map((c) => c.friend);
+
+  
   return (
     <div
       className="tab-pane fade show active"
@@ -59,7 +61,7 @@ const Chats = () => {
               {chats?.map((user) => (
                 <ListItem key={user.id} user={user} />
               ))}
-              {/* 
+
               <li className="unread">
                 <a href="#">
                   <div className="media">
@@ -332,8 +334,6 @@ const Chats = () => {
                   </div>
                 </a>
               </li>
-            
-             */}
             </ul>
           </div>
         </ContactList>
