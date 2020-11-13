@@ -10,6 +10,7 @@ import { ChatSpinner } from "components/utils/Spinners/ChatSidebarSpinners";
 import styled from "styled-components";
 import useWindowSize from "@rooks/use-window-size";
 import { AccountForm } from "components/styles/SharedStyles";
+import { customMedia } from "components/styles/Global";
 
 const ChatInput = () => {
   const [isLoading, setLoading] = useState(false);
@@ -131,7 +132,7 @@ const ChatInput = () => {
                 <input
                   type="text"
                   name="message"
-                  className="form-control form-control-lg bg-light border-light"
+                  className="form-control form-control-lg"
                   placeholder="Enter Message..."
                   value={message}
                   onChange={(event) => SetMessage(event.target.value)}
@@ -197,7 +198,14 @@ const ChatInput = () => {
   );
 };
 
-const InputComponentStyles = styled.div``;
+const InputComponentStyles = styled.div`
+  bottom: 0px;
+  position: fixed;
+  width: 70%;
+  ${customMedia.lessThan("medium")`
+  width: 100%;
+  `}
+`;
 
 const Form = styled(AccountForm)`
   margin-left: 0;

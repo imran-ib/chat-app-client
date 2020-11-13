@@ -1,7 +1,12 @@
 import React from "react";
-import { useRemoveFriendMutation, FriendsDocument } from "generated/graphql";
+import {
+  useRemoveFriendMutation,
+  FriendsDocument,
+  GetChatsDocument,
+} from "generated/graphql";
 import { toast } from "react-toastify";
 import { useChatLeftSideStore } from "components/ChatComponents/ChatState";
+import { useConversationStore } from "components/ChatComponents/ChatState";
 
 interface Props {
   otherUser: {
@@ -18,6 +23,7 @@ interface Props {
 
 const UnFriend = (props: Props) => {
   const setChats: any = useChatLeftSideStore((state) => state.setChats);
+  const dispatch = useConversationStore((state) => state.dispatch);
   const { otherUser } = props;
 
   const [RemoveFriend, { loading }] = useRemoveFriendMutation({
@@ -25,8 +31,14 @@ const UnFriend = (props: Props) => {
       FriendId: otherUser.id,
     },
     onError: (err) => toast.error(err.message),
-    refetchQueries: [{ query: FriendsDocument }],
+    refetchQueries: [{ query: FriendsDocument }, { query: GetChatsDocument }],
+
     onCompleted: () => {
+      //@ts-ignore
+      dispatch({
+        type: "SET_USER",
+        payload: { user: null },
+      });
       setChats();
       toast.success(`Success! Contact removed `);
     },

@@ -6,6 +6,9 @@ import {
 import { User } from "generated/graphql";
 import { useUser } from "components/Auth/Auth";
 import LastSeenComponent from "components/ChatComponents/Sidebarcomponents/MyProfile/UserLastSeen";
+import AboutSection from "components/ChatComponents/Sidebarcomponents/MyProfile/UsersAboutSection";
+import Media from "./Media";
+import styled from "styled-components";
 
 const OtherUserProfile: React.FC<any> = () => {
   const CurrentUser = useUser();
@@ -22,7 +25,7 @@ const OtherUserProfile: React.FC<any> = () => {
     user = CurrentUser;
   }
   return (
-    <div
+    <ProfileStyles
       className={
         otherUsersProfileActive
           ? "user-profile-sidebar d-block"
@@ -61,297 +64,30 @@ const OtherUserProfile: React.FC<any> = () => {
       {/* <!-- Start user-profile-desc --> */}
       <div className="p-4 user-profile-desc" data-simplebar>
         <div className="text-muted">
-          <p className="mb-4">
-            If several languages coalesce, the grammar of the resulting language
-            is more simple and regular than that of the individual.
-          </p>
+          <p className="mb-4">status</p>
         </div>
 
+        <Heading>About</Heading>
         <div id="profile-user-accordion" className="custom-accordion">
-          <div className="card shadow-none border mb-2">
-            <a
-              href="#collapseOne"
-              className="text-dark"
-              data-toggle="collapse"
-              aria-expanded="true"
-              aria-controls="collapseOne"
-            >
-              <div className="card-header" id="headingOne">
-                <h5 className="font-size-14 m-0">
-                  <i className="ri-user-2-line mr-2 align-middle d-inline-block"></i>
-                  About
-                  <i className="mdi mdi-chevron-up float-right accor-plus-icon"></i>
-                </h5>
-              </div>
-            </a>
+          <AboutSection user={user} />
+          <Media id={user.id} />
 
-            <div
-              id="collapseOne"
-              className="collapse show"
-              aria-labelledby="headingOne"
-              data-parent="#profile-user-accordion"
-            >
-              <div className="card-body">
-                <div>
-                  <p className="text-muted mb-1">Name</p>
-                  <h5 className="font-size-14">Doris Brown</h5>
-                </div>
-
-                <div className="mt-4">
-                  <p className="text-muted mb-1">Email</p>
-                  <h5 className="font-size-14">adc@123.com</h5>
-                </div>
-
-                <div className="mt-4">
-                  <p className="text-muted mb-1">Time</p>
-                  <h5 className="font-size-14">11:40 AM</h5>
-                </div>
-
-                <div className="mt-4">
-                  <p className="text-muted mb-1">Location</p>
-                  <h5 className="font-size-14 mb-0">California, USA</h5>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* <!-- End About card --> */}
-
-          <div className="card mb-1 shadow-none border">
-            <a
-              href="#collapseTwo"
-              className="text-dark collapsed"
-              data-toggle="collapse"
-              aria-expanded="false"
-              aria-controls="collapseTwo"
-            >
-              <div className="card-header" id="headingTwo">
-                <h5 className="font-size-14 m-0">
-                  <i className="ri-attachment-line mr-2 align-middle d-inline-block"></i>
-                  Attached Files
-                  <i className="mdi mdi-chevron-up float-right accor-plus-icon"></i>
-                </h5>
-              </div>
-            </a>
-            <div
-              id="collapseTwo"
-              className="collapse"
-              aria-labelledby="headingTwo"
-              data-parent="#profile-user-accordion"
-            >
-              <div className="card-body">
-                <div className="card p-2 border mb-2">
-                  <div className="media align-items-center">
-                    <div className="avatar-sm mr-3">
-                      <div className="avatar-title bg-soft-primary text-primary rounded font-size-20">
-                        <i className="ri-file-text-fill"></i>
-                      </div>
-                    </div>
-                    <div className="media-body">
-                      <div className="text-left">
-                        <h5 className="font-size-14 mb-1">admin_v1.0.zip</h5>
-                        <p className="text-muted font-size-13 mb-0">12.5 MB</p>
-                      </div>
-                    </div>
-
-                    <div className="ml-4">
-                      <ul className="list-inline mb-0 font-size-18">
-                        <li className="list-inline-item">
-                          <a href="#" className="text-muted px-1">
-                            <i className="ri-download-2-line"></i>
-                          </a>
-                        </li>
-                        <li className="list-inline-item dropdown">
-                          <a
-                            className="dropdown-toggle text-muted px-1"
-                            href="#"
-                            role="button"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i className="ri-more-fill"></i>
-                          </a>
-                          <div className="dropdown-menu dropdown-menu-right">
-                            <a className="dropdown-item" href="#">
-                              Action
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Another action
-                            </a>
-                            <div className="dropdown-divider"></div>
-                            <a className="dropdown-item" href="#">
-                              Delete
-                            </a>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                {/* <!-- end card --> */}
-
-                <div className="card p-2 border mb-2">
-                  <div className="media align-items-center">
-                    <div className="avatar-sm mr-3">
-                      <div className="avatar-title bg-soft-primary text-primary rounded font-size-20">
-                        <i className="ri-image-fill"></i>
-                      </div>
-                    </div>
-                    <div className="media-body">
-                      <div className="text-left">
-                        <h5 className="font-size-14 mb-1">Image-1.jpg</h5>
-                        <p className="text-muted font-size-13 mb-0">4.2 MB</p>
-                      </div>
-                    </div>
-
-                    <div className="ml-4">
-                      <ul className="list-inline mb-0 font-size-18">
-                        <li className="list-inline-item">
-                          <a href="#" className="text-muted px-1">
-                            <i className="ri-download-2-line"></i>
-                          </a>
-                        </li>
-                        <li className="list-inline-item dropdown">
-                          <a
-                            className="dropdown-toggle text-muted px-1"
-                            href="#"
-                            role="button"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i className="ri-more-fill"></i>
-                          </a>
-                          <div className="dropdown-menu dropdown-menu-right">
-                            <a className="dropdown-item" href="#">
-                              Action
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Another action
-                            </a>
-                            <div className="dropdown-divider"></div>
-                            <a className="dropdown-item" href="#">
-                              Delete
-                            </a>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                {/* <!-- end card --> */}
-
-                <div className="card p-2 border mb-2">
-                  <div className="media align-items-center">
-                    <div className="avatar-sm mr-3">
-                      <div className="avatar-title bg-soft-primary text-primary rounded font-size-20">
-                        <i className="ri-image-fill"></i>
-                      </div>
-                    </div>
-                    <div className="media-body">
-                      <div className="text-left">
-                        <h5 className="font-size-14 mb-1">Image-2.jpg</h5>
-                        <p className="text-muted font-size-13 mb-0">3.1 MB</p>
-                      </div>
-                    </div>
-
-                    <div className="ml-4">
-                      <ul className="list-inline mb-0 font-size-18">
-                        <li className="list-inline-item">
-                          <a href="#" className="text-muted px-1">
-                            <i className="ri-download-2-line"></i>
-                          </a>
-                        </li>
-                        <li className="list-inline-item dropdown">
-                          <a
-                            className="dropdown-toggle text-muted px-1"
-                            href="#"
-                            role="button"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i className="ri-more-fill"></i>
-                          </a>
-                          <div className="dropdown-menu dropdown-menu-right">
-                            <a className="dropdown-item" href="#">
-                              Action
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Another action
-                            </a>
-                            <div className="dropdown-divider"></div>
-                            <a className="dropdown-item" href="#">
-                              Delete
-                            </a>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                {/* <!-- end card --> */}
-
-                <div className="card p-2 border mb-2">
-                  <div className="media align-items-center">
-                    <div className="avatar-sm mr-3">
-                      <div className="avatar-title bg-soft-primary text-primary rounded font-size-20">
-                        <i className="ri-file-text-fill"></i>
-                      </div>
-                    </div>
-                    <div className="media-body">
-                      <div className="text-left">
-                        <h5 className="font-size-14 mb-1">Landing-A.zip</h5>
-                        <p className="text-muted font-size-13 mb-0">6.7 MB</p>
-                      </div>
-                    </div>
-
-                    <div className="ml-4">
-                      <ul className="list-inline mb-0 font-size-18">
-                        <li className="list-inline-item">
-                          <a href="#" className="text-muted px-1">
-                            <i className="ri-download-2-line"></i>
-                          </a>
-                        </li>
-                        <li className="list-inline-item dropdown">
-                          <a
-                            className="dropdown-toggle text-muted px-1"
-                            href="#"
-                            role="button"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i className="ri-more-fill"></i>
-                          </a>
-                          <div className="dropdown-menu dropdown-menu-right">
-                            <a className="dropdown-item" href="#">
-                              Action
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Another action
-                            </a>
-                            <div className="dropdown-divider"></div>
-                            <a className="dropdown-item" href="#">
-                              Delete
-                            </a>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                {/* <!-- end card --> */}
-              </div>
-            </div>
-          </div>
           {/* <!-- End Attached Files card --> */}
         </div>
         {/* <!-- end profile-user-accordion --> */}
       </div>
       {/* <!-- end user-profile-desc --> */}
-    </div>
+    </ProfileStyles>
   );
 };
+
+const Heading = styled.h1`
+  font-size: 3rem;
+  text-align: center;
+`;
+const ProfileStyles = styled.div`
+  overflow: auto;
+  z-index: 10000;
+`;
 
 export default OtherUserProfile;

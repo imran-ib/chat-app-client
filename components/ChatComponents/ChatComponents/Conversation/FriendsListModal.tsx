@@ -27,7 +27,7 @@ const FriendListModal: React.FC<Props> = ({ CurrentMessage }) => {
     (state) => state.handleCloseFriendsListModal
   );
 
-  const [ForwardMessage, { loading, error }] = useForwardMessageMutation();
+  const [ForwardMessage, { loading, error }] = useForwardMessageMutation({});
   const { innerWidth } = useWindowSize();
   const IsSmallScreen = innerWidth <= 941;
   const [GetMessages] = useGetMessagesLazyQuery({
@@ -73,7 +73,7 @@ const FriendListModal: React.FC<Props> = ({ CurrentMessage }) => {
               variables: { from: user.username },
             });
             //@ts-ignore
-            dispatch({ type: "SET_USER", payload: { user } });
+            // dispatch({ type: "SET_USER", payload: { user } });
             handleClose();
           }}
           key={user.id}

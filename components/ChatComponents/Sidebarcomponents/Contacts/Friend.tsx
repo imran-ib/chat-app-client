@@ -8,6 +8,7 @@ import {
   useConversationStore,
 } from "components/ChatComponents/ChatState";
 import useWindowSize from "@rooks/use-window-size";
+import UnFriend from "components/ChatComponents/ChatComponents/TopBar/AddFriendButton/UnFriend";
 
 interface Props {
   friend: any;
@@ -21,6 +22,9 @@ const Friend: React.FC<Props> = ({ friend }) => {
   const dispatch = useConversationStore((state) => state.dispatch);
   const setOpenChatForSmallScreen: any = useChatLeftSideStore(
     (state) => state.setOpenChatForSmallScreen
+  );
+  const setOtherUsersProfileActive: any = useChatLeftSideStore(
+    (state) => state.setOtherUsersProfileActive
   );
 
   const { innerWidth } = useWindowSize();
@@ -76,16 +80,11 @@ const Friend: React.FC<Props> = ({ friend }) => {
                 : "dropdown-menu dropdown-menu-right"
             }
           >
-            <a className="dropdown-item" href="#">
-              Share <i className="ri-share-line float-right text-muted"></i>
+            <a onClick={setOtherUsersProfileActive} className="dropdown-item">
+              Profile
             </a>
-            <a className="dropdown-item" href="#">
-              Block <i className="ri-forbid-line float-right text-muted"></i>
-            </a>
-            <a className="dropdown-item" href="#">
-              Remove{" "}
-              <i className="ri-delete-bin-line float-right text-muted"></i>
-            </a>
+            <a className="dropdown-item">Block</a>
+            <UnFriend otherUser={friend} />
           </MenuStyles>
         </div>
       </div>

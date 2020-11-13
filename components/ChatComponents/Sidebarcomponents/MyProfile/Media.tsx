@@ -1,5 +1,4 @@
 import React from "react";
-
 import { useGetUsersMediaQuery } from "generated/graphql";
 import UserMediaGrid from "components/utils/UserMediaGrid/UserMediaGrid";
 

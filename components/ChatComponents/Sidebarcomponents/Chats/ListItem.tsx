@@ -109,7 +109,11 @@ const ListItem = ({ user: USER }: any) => {
               className="rounded-circle avatar-xs"
               alt="user image"
             />
-            {active && <span className="user-status"></span>}
+            {active ? (
+              <span className="user-status bg-success"></span>
+            ) : (
+              <span className="user-status bg-danger "></span>
+            )}
           </div>
 
           <div className="media-body overflow-hidden">

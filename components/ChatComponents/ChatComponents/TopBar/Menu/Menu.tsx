@@ -32,7 +32,7 @@ const Menu: React.FC<Props> = ({ CurrentUser, otherUser }) => {
       });
       //@ts-ignore
       setProfile();
-      toast.success(`All Your Messages in this chat have been deleted`);
+      toast.success(`All Your Messages in this chat have been cleared`);
     },
     onError: (err) => toast.error(err.message),
   });
@@ -81,7 +81,7 @@ const Menu: React.FC<Props> = ({ CurrentUser, otherUser }) => {
               className="dropdown-item"
               href="#"
             >
-              {loading ? "Deleting.." : "Delete Chat"}
+              {loading ? "Processing.." : "Clear Chat"}
             </a>
             <UnFriend otherUser={otherUser} />
           </div>
