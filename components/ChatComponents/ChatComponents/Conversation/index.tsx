@@ -14,7 +14,6 @@ import FriendListModal from "./FriendsListModal";
 import { Alert } from "react-bootstrap";
 import { useUser } from "components/Auth/Auth";
 
-
 const ConversationStyles = styled.div`
   /* height: 600px; */
   overflow: auto;
@@ -36,7 +35,7 @@ const ConversationStyles = styled.div`
 
 const Conversation = () => {
   const dispatch = useConversationStore((state) => state.dispatch);
- 
+
   const CurrentUser = useUser();
   const [CurrentMessage, setCurrentMessage] = useState();
   const show = useModalStore((state) => state.showFriendsListModal);
@@ -70,8 +69,6 @@ const Conversation = () => {
       payload: { messages: data?.RestoreDeletedChat },
     });
   }
-
- 
 
   return (
     <>
@@ -116,13 +113,17 @@ const Conversation = () => {
                 />
               )}
               {/* image */}
-              {chat.image && (
-                <ImageMessage
-                  setCurrentMessage={setCurrentMessage}
-                  chat={chat}
-                  user={user}
-                  i={i}
-                />
+              {chat.image ? (
+                <>
+                  <ImageMessage
+                    setCurrentMessage={setCurrentMessage}
+                    chat={chat}
+                    user={user}
+                    i={i}
+                  />
+                </>
+              ) : (
+                ""
               )}
             </div>
           ))}

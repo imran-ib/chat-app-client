@@ -25,6 +25,8 @@ const ImagesMessage: React.FC<Props> = ({
   const [Toggle, SetToggle] = useState(false);
 
   useOnClickOutside(ref, () => SetToggle(false));
+  const Image = !chat.image.includes(".pdf");
+  const pdf = chat.image.includes(".pdf");
 
   return (
     //@ts-ignore
@@ -49,35 +51,48 @@ const ImagesMessage: React.FC<Props> = ({
                 <li className="list-inline-item message-img-list">
                   <div>
                     <SRLWrapper>
-                      <img
-                        src={chat.image}
-                        alt={chat.from.username}
-                        className="rounded border"
-                      />
+                      {Image && (
+                        <img
+                          src={chat.image}
+                          alt={chat.from.username}
+                          className="rounded border"
+                        />
+                      )}
                     </SRLWrapper>
+                    {pdf && (
+                      <PdfLink target="_blank" href={chat.image}>
+                        <img
+                          src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg"
+                          alt="pdf file"
+                        />
+                      </PdfLink>
+                    )}
                   </div>
-                  {chat.reactions?.length &&
-                    chat.reactions?.map((reaction: any, i: number) => (
-                      <i
-                        key={i}
-                        style={{
-                          position: "absolute",
-                          fontSize: "2.5rem",
-                          bottom: "0.2rem",
-                          right: "-4rem",
-                        }}
-                      >
-                        {[
-                          ...new Set(
-                            chat.reactions?.map((r: any) => r.content)
-                          ),
-                        ]}
-                        <span className="text-white">
-                          {" "}
-                          {chat.reactions.length >= 1 && chat.reactions.length}
-                        </span>
-                      </i>
-                    ))}
+
+                  {chat.reactions?.length
+                    ? chat.reactions?.map((reaction: any, i: number) => (
+                        <i
+                          key={i}
+                          style={{
+                            position: "absolute",
+                            fontSize: "2.5rem",
+                            bottom: "0.2rem",
+                            right: "-4rem",
+                          }}
+                        >
+                          {[
+                            ...new Set(
+                              chat.reactions?.map((r: any) => r.content)
+                            ),
+                          ]}
+                          <span className="text-white">
+                            {" "}
+                            {chat.reactions.length >= 1 &&
+                              chat.reactions.length}
+                          </span>
+                        </i>
+                      ))
+                    : ""}
                 </li>
               </ul>
               <p className="chat-time mb-0">
@@ -108,6 +123,11 @@ const ImagesMessage: React.FC<Props> = ({
     </li>
   );
 };
+
+const PdfLink = styled.a`
+  font-size: 2rem;
+  color: inherit;
+`;
 
 const ForwardedStylesExtended = styled(ForwardedStyles)`
   right: 5.5rem;

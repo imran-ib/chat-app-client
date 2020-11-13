@@ -12,6 +12,7 @@ const ImageUpload = ({ images, setImages }) => {
       cloudName: "iib-webdevs",
       tags: [tag],
       uploadPreset: "ebazar",
+      
     };
 
     openUploadWidget(uploadOptions, (error, photos) => {

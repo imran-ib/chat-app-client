@@ -215,3 +215,12 @@ export const RestoreDeletedChat = gql`
     }
   }
 `;
+
+export const GetUserMedia = gql`
+  query GetUsersMedia {
+    GetUsersMedia {
+      id
+      image
+    }
+  }
+`;

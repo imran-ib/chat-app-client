@@ -2,15 +2,15 @@ import React, { useState, useRef } from "react";
 import { useUser } from "components/Auth/Auth";
 import styled from "styled-components";
 import { useOnClickOutside } from "components/utils/hooks/useClickOutside";
-import { SRLWrapper } from "simple-react-lightbox";
+
 import { customMedia } from "components/styles/Global";
 import LastSeenComponent from "./UserLastSeen";
+import Media from "./Media";
 
 const Profile = () => {
   // Create a ref that we add to the element for which we want to detect outside clicks
   const ref = useRef();
   const user = useUser();
-  console.log("Profile -> user", user);
   // Call hook passing in the ref and a function to call on outside click
   const [ProfileEdit, setProfileEdit] = useState(false);
   useOnClickOutside(ref, () => setProfileEdit(false));
@@ -112,90 +112,7 @@ const Profile = () => {
               {/* Accourdian */}
             </div>
           </AboutSection>
-          <UserMedia>
-            <h1>Media</h1>
-            <div className="gallery">
-              <SRLWrapper>
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-4.jpg" alt="" />
-                <img src="/images/users/avatar-5.jpg" alt="" />
-                <img src="/images/users/avatar-6.jpg" alt="" />
-                <img src="/images/users/avatar-7.jpg" alt="" />
-                <img src="/images/users/avatar-8.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-4.jpg" alt="" />
-                <img src="/images/users/avatar-5.jpg" alt="" />
-                <img src="/images/users/avatar-6.jpg" alt="" />
-                <img src="/images/users/avatar-7.jpg" alt="" />
-                <img src="/images/users/avatar-8.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-4.jpg" alt="" />
-                <img src="/images/users/avatar-5.jpg" alt="" />
-                <img src="/images/users/avatar-6.jpg" alt="" />
-                <img src="/images/users/avatar-7.jpg" alt="" />
-                <img src="/images/users/avatar-8.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-4.jpg" alt="" />
-                <img src="/images/users/avatar-5.jpg" alt="" />
-                <img src="/images/users/avatar-6.jpg" alt="" />
-                <img src="/images/users/avatar-7.jpg" alt="" />
-                <img src="/images/users/avatar-8.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-4.jpg" alt="" />
-                <img src="/images/users/avatar-5.jpg" alt="" />
-                <img src="/images/users/avatar-6.jpg" alt="" />
-                <img src="/images/users/avatar-7.jpg" alt="" />
-                <img src="/images/users/avatar-8.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-4.jpg" alt="" />
-                <img src="/images/users/avatar-5.jpg" alt="" />
-                <img src="/images/users/avatar-6.jpg" alt="" />
-                <img src="/images/users/avatar-7.jpg" alt="" />
-                <img src="/images/users/avatar-8.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-                <img src="/images/users/avatar-4.jpg" alt="" />
-                <img src="/images/users/avatar-5.jpg" alt="" />
-                <img src="/images/users/avatar-6.jpg" alt="" />
-                <img src="/images/users/avatar-7.jpg" alt="" />
-                <img src="/images/users/avatar-8.jpg" alt="" />
-                <img src="/images/users/avatar-1.jpg" alt="" />
-                <img src="/images/users/avatar-2.jpg" alt="" />
-                <img src="/images/users/avatar-3.jpg" alt="" />
-              </SRLWrapper>
-            </div>
-          </UserMedia>
+          <Media />
         </div>
       </div>
     </ProfileStyles>
@@ -256,36 +173,4 @@ const AboutList = styled.ul`
   }
 `;
 
-const UserMedia = styled.div`
-  margin-top: 1.5rem;
-  h1 {
-    text-align: center;
-  }
-  .gallery {
-    margin: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    img {
-      cursor: pointer;
-      width: 50px;
-      height: 50px;
-    }
-  }
-  height: 26rem;
-  overflow: auto;
-
-  /* Scroll bar */
-  ::-webkit-scrollbar {
-    width: 0.4em;
-  }
-
-  ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: darkgrey;
-    outline: 1px solid slategrey;
-  }
-`;
 export default Profile;

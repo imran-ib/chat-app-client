@@ -88,6 +88,7 @@ const ChatInput = () => {
     data.append("file", files[0]);
     data.append("upload_preset", "ebazar");
     data.append("folder", "iChat");
+
     const res = await fetch(
       "https://api.cloudinary.com/v1_1/iib-webdevs/image/upload",
       {
@@ -95,7 +96,7 @@ const ChatInput = () => {
         body: data,
       }
     );
-    const { secure_url, eager } = await res.json();
+    const { secure_url } = await res.json();
 
     setImage(secure_url);
     // largeImage: eager[0].secure_url,
