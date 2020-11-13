@@ -9,7 +9,6 @@ import AddFriend from "./AddFriendButton/AddFriend";
 import FriendRequest from "./FriendRequest/FriendRequest";
 import Menu from "./Menu/Menu";
 import LastSeenComponent from "components/ChatComponents/Sidebarcomponents/MyProfile/UserLastSeen";
-import active from "../";
 
 const TopBar: React.FC<any> = () => {
   const CurrentUser = useUser();

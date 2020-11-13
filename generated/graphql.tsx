@@ -123,6 +123,8 @@ export type Query = {
   GetFriendRequests?: Maybe<Array<FriendsRequest>>;
   GetUsersBlockedStatus?: Maybe<TemporaryBlockOtherUserOnDeleteChat>;
   GetUsersMedia?: Maybe<Array<UsersMedia>>;
+  /** Get Media Between Two Users */
+  GetMediaBetweenUsers?: Maybe<Array<UsersMedia>>;
 };
 
 
@@ -167,6 +169,11 @@ export type QueryGetUsersArgs = {
 
 export type QueryGetUsersBlockedStatusArgs = {
   username: Scalars['String'];
+};
+
+
+export type QueryGetMediaBetweenUsersArgs = {
+  OtherUserId: Scalars['Int'];
 };
 
 export type Mutation = {
@@ -1233,6 +1240,19 @@ export type GetUsersMediaQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetUsersMediaQuery = (
   { __typename?: 'Query' }
   & { GetUsersMedia?: Maybe<Array<(
+    { __typename?: 'UsersMedia' }
+    & Pick<UsersMedia, 'id' | 'image'>
+  )>> }
+);
+
+export type GetMediaBetweenUsersQueryVariables = Exact<{
+  OtherUserId: Scalars['Int'];
+}>;
+
+
+export type GetMediaBetweenUsersQuery = (
+  { __typename?: 'Query' }
+  & { GetMediaBetweenUsers?: Maybe<Array<(
     { __typename?: 'UsersMedia' }
     & Pick<UsersMedia, 'id' | 'image'>
   )>> }
@@ -2411,3 +2431,37 @@ export function useGetUsersMediaLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetUsersMediaQueryHookResult = ReturnType<typeof useGetUsersMediaQuery>;
 export type GetUsersMediaLazyQueryHookResult = ReturnType<typeof useGetUsersMediaLazyQuery>;
 export type GetUsersMediaQueryResult = Apollo.QueryResult<GetUsersMediaQuery, GetUsersMediaQueryVariables>;
+export const GetMediaBetweenUsersDocument = gql`
+    query GetMediaBetweenUsers($OtherUserId: Int!) {
+  GetMediaBetweenUsers(OtherUserId: $OtherUserId) {
+    id
+    image
+  }
+}
+    `;
+
+/**
+ * __useGetMediaBetweenUsersQuery__
+ *
+ * To run a query within a React component, call `useGetMediaBetweenUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMediaBetweenUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMediaBetweenUsersQuery({
+ *   variables: {
+ *      OtherUserId: // value for 'OtherUserId'
+ *   },
+ * });
+ */
+export function useGetMediaBetweenUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetMediaBetweenUsersQuery, GetMediaBetweenUsersQueryVariables>) {
+        return Apollo.useQuery<GetMediaBetweenUsersQuery, GetMediaBetweenUsersQueryVariables>(GetMediaBetweenUsersDocument, baseOptions);
+      }
+export function useGetMediaBetweenUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMediaBetweenUsersQuery, GetMediaBetweenUsersQueryVariables>) {
+          return Apollo.useLazyQuery<GetMediaBetweenUsersQuery, GetMediaBetweenUsersQueryVariables>(GetMediaBetweenUsersDocument, baseOptions);
+        }
+export type GetMediaBetweenUsersQueryHookResult = ReturnType<typeof useGetMediaBetweenUsersQuery>;
+export type GetMediaBetweenUsersLazyQueryHookResult = ReturnType<typeof useGetMediaBetweenUsersLazyQuery>;
+export type GetMediaBetweenUsersQueryResult = Apollo.QueryResult<GetMediaBetweenUsersQuery, GetMediaBetweenUsersQueryVariables>;

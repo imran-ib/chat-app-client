@@ -9,6 +9,7 @@ import { DropMenuStyles } from "components/styles/SharedStyles";
 import { useDeleteChatMutation, User } from "generated/graphql";
 import { toast } from "react-toastify";
 import UnFriend from "../AddFriendButton/UnFriend";
+import ShowMedia from "./ShowMedia";
 
 interface Props {
   CurrentUser: User | any;
@@ -72,6 +73,7 @@ const Menu: React.FC<Props> = ({ CurrentUser, otherUser }) => {
             >
               View profile
             </a>
+            <ShowMedia id={otherUser.id} />
             <a
               onClick={() => {
                 DeleteChat();

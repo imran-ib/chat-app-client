@@ -4,7 +4,6 @@ import styled from "styled-components";
 
 interface ModalProps {
   show: boolean | any;
-
   onHide: () => void | any;
   children: React.ReactNode;
 }

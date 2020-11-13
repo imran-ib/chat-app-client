@@ -224,3 +224,12 @@ export const GetUserMedia = gql`
     }
   }
 `;
+
+export const GetMediaBetweenUsers = gql`
+  query GetMediaBetweenUsers($OtherUserId: Int!) {
+    GetMediaBetweenUsers(OtherUserId: $OtherUserId) {
+      id
+      image
+    }
+  }
+`;

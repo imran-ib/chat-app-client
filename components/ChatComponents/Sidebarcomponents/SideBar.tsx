@@ -67,7 +67,7 @@ const SideBar = () => {
             </a>
           </li>
 
-          <li
+          {/* <li
             className="nav-item"
             data-toggle="tooltip"
             data-trigger="hover"
@@ -84,7 +84,7 @@ const SideBar = () => {
             >
               <i className="ri-group-line"></i>
             </a>
-          </li>
+          </li> */}
           <li
             className="nav-item"
             data-toggle="tooltip"
