@@ -125,6 +125,7 @@ export type Query = {
   GetUsersMedia?: Maybe<Array<UsersMedia>>;
   /** Get Media Between Two Users */
   GetMediaBetweenUsers?: Maybe<Array<UsersMedia>>;
+  SearchTermResults?: Maybe<Array<Messages>>;
 };
 
 
@@ -174,6 +175,11 @@ export type QueryGetUsersBlockedStatusArgs = {
 
 export type QueryGetMediaBetweenUsersArgs = {
   OtherUserId: Scalars['Int'];
+};
+
+
+export type QuerySearchTermResultsArgs = {
+  term: Scalars['String'];
 };
 
 export type Mutation = {
@@ -1094,7 +1100,17 @@ export type ForwardMessageMutation = (
   { __typename?: 'Mutation' }
   & { ForwardMessage: (
     { __typename?: 'Messages' }
-    & Pick<Messages, 'id' | 'content'>
+    & Pick<Messages, 'id' | 'content' | 'image' | 'isSenderFriend' | 'isSenderFollowing' | 'ReceiverId' | 'SenderId' | 'createdAt' | 'updatedAt'>
+    & { from: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'avatar'>
+    ), to: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'avatar'>
+    ), reactions: Array<(
+      { __typename?: 'Reaction' }
+      & Pick<Reaction, 'id' | 'content' | 'userId' | 'messageId' | 'createdAt'>
+    )> }
   ) }
 );
 
@@ -1255,6 +1271,26 @@ export type GetMediaBetweenUsersQuery = (
   & { GetMediaBetweenUsers?: Maybe<Array<(
     { __typename?: 'UsersMedia' }
     & Pick<UsersMedia, 'id' | 'image'>
+  )>> }
+);
+
+export type SearchTermResultsQueryVariables = Exact<{
+  term: Scalars['String'];
+}>;
+
+
+export type SearchTermResultsQuery = (
+  { __typename?: 'Query' }
+  & { SearchTermResults?: Maybe<Array<(
+    { __typename?: 'Messages' }
+    & Pick<Messages, 'id' | 'content' | 'createdAt'>
+    & { from: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'avatar'>
+    ), to: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'avatar'>
+    ) }
   )>> }
 );
 
@@ -2013,6 +2049,30 @@ export const ForwardMessageDocument = gql`
   ForwardMessage(Sender: $Sender, Receiver: $Receiver, content: $content, image: $image) {
     id
     content
+    from {
+      id
+      username
+      avatar
+    }
+    to {
+      id
+      username
+      avatar
+    }
+    reactions {
+      id
+      content
+      userId
+      messageId
+      createdAt
+    }
+    image
+    isSenderFriend
+    isSenderFollowing
+    ReceiverId
+    SenderId
+    createdAt
+    updatedAt
   }
 }
     `;
@@ -2465,3 +2525,48 @@ export function useGetMediaBetweenUsersLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type GetMediaBetweenUsersQueryHookResult = ReturnType<typeof useGetMediaBetweenUsersQuery>;
 export type GetMediaBetweenUsersLazyQueryHookResult = ReturnType<typeof useGetMediaBetweenUsersLazyQuery>;
 export type GetMediaBetweenUsersQueryResult = Apollo.QueryResult<GetMediaBetweenUsersQuery, GetMediaBetweenUsersQueryVariables>;
+export const SearchTermResultsDocument = gql`
+    query SearchTermResults($term: String!) {
+  SearchTermResults(term: $term) {
+    id
+    content
+    createdAt
+    from {
+      id
+      username
+      avatar
+    }
+    to {
+      id
+      username
+      avatar
+    }
+  }
+}
+    `;
+
+/**
+ * __useSearchTermResultsQuery__
+ *
+ * To run a query within a React component, call `useSearchTermResultsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchTermResultsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchTermResultsQuery({
+ *   variables: {
+ *      term: // value for 'term'
+ *   },
+ * });
+ */
+export function useSearchTermResultsQuery(baseOptions?: Apollo.QueryHookOptions<SearchTermResultsQuery, SearchTermResultsQueryVariables>) {
+        return Apollo.useQuery<SearchTermResultsQuery, SearchTermResultsQueryVariables>(SearchTermResultsDocument, baseOptions);
+      }
+export function useSearchTermResultsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchTermResultsQuery, SearchTermResultsQueryVariables>) {
+          return Apollo.useLazyQuery<SearchTermResultsQuery, SearchTermResultsQueryVariables>(SearchTermResultsDocument, baseOptions);
+        }
+export type SearchTermResultsQueryHookResult = ReturnType<typeof useSearchTermResultsQuery>;
+export type SearchTermResultsLazyQueryHookResult = ReturnType<typeof useSearchTermResultsLazyQuery>;
+export type SearchTermResultsQueryResult = Apollo.QueryResult<SearchTermResultsQuery, SearchTermResultsQueryVariables>;

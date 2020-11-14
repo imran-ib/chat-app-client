@@ -4,13 +4,14 @@ import {
   useChatLeftSideStore,
 } from "components/ChatComponents/ChatState";
 import styled from "styled-components";
-import { useGetMessagesLazyQuery } from "generated/graphql";
+import { GetMessagesDocument, GetChatsDocument } from "generated/graphql";
 import useWindowSize from "@rooks/use-window-size";
 import { useForwardMessageMutation } from "generated/graphql";
 import { ChatSpinner } from "components/utils/Spinners/ChatSidebarSpinners";
 import Alert from "react-bootstrap/Alert";
 import { useUser } from "components/Auth/Auth";
 import { useModalStore } from "components/ChatComponents/ChatState/ModalState";
+import { toast } from "react-toastify";
 
 interface Props {
   CurrentMessage: any;
@@ -30,16 +31,6 @@ const FriendListModal: React.FC<Props> = ({ CurrentMessage }) => {
   const [ForwardMessage, { loading, error }] = useForwardMessageMutation({});
   const { innerWidth } = useWindowSize();
   const IsSmallScreen = innerWidth <= 941;
-  const [GetMessages] = useGetMessagesLazyQuery({
-    onCompleted: (data) => {
-      //@ts-ignore
-      dispatch({
-        type: "SET_MESSAGES",
-        payload: { messages: data.GetMessages },
-      });
-      if (data && IsSmallScreen) setOpenChatForSmallScreen();
-    },
-  });
 
   if (!Friends.length) return <p>No User Found</p>;
 
@@ -67,11 +58,17 @@ const FriendListModal: React.FC<Props> = ({ CurrentMessage }) => {
                 content: CurrentMessage.content,
                 image: CurrentMessage.image,
               },
-            });
+              refetchQueries: [
+                {
+                  query: GetMessagesDocument,
+                  variables: { from: user.username },
+                },
+                { query: GetChatsDocument },
+              ],
+            }).then(() =>
+              toast.success(`Message Forwarded to ${user.username}`)
+            );
 
-            GetMessages({
-              variables: { from: user.username },
-            });
             //@ts-ignore
             // dispatch({ type: "SET_USER", payload: { user } });
             handleClose();

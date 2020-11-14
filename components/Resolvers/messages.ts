@@ -66,6 +66,30 @@ export const ForwardMessage = gql`
     ) {
       id
       content
+      from {
+        id
+        username
+        avatar
+      }
+      to {
+        id
+        username
+        avatar
+      }
+      reactions {
+        id
+        content
+        userId
+        messageId
+        createdAt
+      }
+      image
+      isSenderFriend
+      isSenderFollowing
+      ReceiverId
+      SenderId
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -230,6 +254,26 @@ export const GetMediaBetweenUsers = gql`
     GetMediaBetweenUsers(OtherUserId: $OtherUserId) {
       id
       image
+    }
+  }
+`;
+
+export const SearchTermResults = gql`
+  query SearchTermResults($term: String!) {
+    SearchTermResults(term: $term) {
+      id
+      content
+      createdAt
+      from {
+        id
+        username
+        avatar
+      }
+      to {
+        id
+        username
+        avatar
+      }
     }
   }
 `;

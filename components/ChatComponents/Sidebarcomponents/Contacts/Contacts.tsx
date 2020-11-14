@@ -2,17 +2,28 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useFriendsQuery } from "generated/graphql";
 import AddFriend from "components/ChatComponents/ChatComponents/TopBar/AddFriendButton/AddFriend";
-import SearchFriends from "./SearchFriends";
 import Friend from "./Friend";
 import { useConversationStore } from "components/ChatComponents/ChatState";
+import { AccountForm } from "components/styles/SharedStyles";
 
 //TODO Fetch Pending requests
 
 const Contacts = () => {
+  const [searchTerm, setSearchTerm] = React.useState("");
   const dispatch = useConversationStore((state) => state.dispatch);
   const { data, loading, error, called } = useFriendsQuery();
   // @ts-ignore
   const Friends: any = data?.Friends?.map((fr) => fr.friend);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const results = !searchTerm
+    ? Friends
+    : Friends.filter((Friend: { username: string }) =>
+        Friend.username.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+      );
 
   useEffect(() => {
     !loading &&
@@ -39,7 +50,27 @@ const Contacts = () => {
         </div>
         <h4 className="mb-4">Contacts</h4>
 
-        <SearchFriends />
+        <div className="search-box chat-search-box">
+          <SearchStyles>
+            <div className="input-group input-group-lg rounded-lg position-relative">
+              <div className="input-group-prepend">
+                <button
+                  className="btn btn-link text-decoration-none text-muted pr-1 position-absolute"
+                  type="button"
+                >
+                  <i className="ri-search-line search-icon font-size-18"></i>
+                </button>
+              </div>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search users.."
+                value={searchTerm}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+          </SearchStyles>
+        </div>
       </div>
       <ContactsStyles
         className="tab-pane"
@@ -60,7 +91,7 @@ const Contacts = () => {
               )}
 
               <ul className="list-unstyled contact-list">
-                {Friends?.map((friend: any) => (
+                {results?.map((friend: any) => (
                   <Friend key={friend.id} friend={friend} />
                 ))}
               </ul>
@@ -71,6 +102,22 @@ const Contacts = () => {
     </>
   );
 };
+
+export const SearchStyles = styled(AccountForm)`
+  padding: 0;
+  margin-top: 5rem;
+  margin-left: 0;
+  margin-right: 2.5rem;
+  & button {
+    right: 1.5rem;
+    top: 0.5rem;
+  }
+
+  & input {
+    padding: 2.5rem !important;
+    margin-bottom: 0 !important;
+  }
+`;
 
 const ContactsStyles = styled.div`
   height: 600px;

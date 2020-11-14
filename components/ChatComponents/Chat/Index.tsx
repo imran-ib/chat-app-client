@@ -8,6 +8,7 @@ import {
   useFriendRequestSubSubscription,
   useDeleteMessageSubscriptionSubscription,
   useLastSeenMutation,
+  useFriendsLazyQuery,
 } from "generated/graphql";
 import {
   useConversationStore,
@@ -27,9 +28,22 @@ const Chat = () => {
   //@ts-ignore
   const Messages: Messages[] = useConversationStore((state) => state.messages);
   const [UserLastSeen] = useLastSeenMutation();
+  // Load Friends For Message forward
+  const [Friends] = useFriendsLazyQuery({
+    onCompleted: (data) => {
+      // @ts-ignore
+      const Friends: any = data?.Friends?.map((fr) => fr.friend);
+      //@ts-ignore
+      dispatch({
+        type: "FRIENDS",
+        payload: { friends: Friends },
+      });
+    },
+  });
 
   const { data, loading } = useNewMessageSubscription({
     // New Message Notification To User if The Chat is Not open
+    fetchPolicy: "no-cache",
     onSubscriptionData: (data) =>
       //@ts-ignore
       dispatch({
@@ -56,6 +70,11 @@ const Chat = () => {
       toast.info("New Friend Request");
     },
   });
+
+  useEffect(() => {
+    Friends();
+  }, [Friends]);
+
   useEffect(() => {
     UserLastSeen();
     //Send Mutation Every 30 Seconds
@@ -92,7 +111,6 @@ const Chat = () => {
         type: "NEW_MESSAGE",
         payload: { newMessage: data?.NewMessage },
       });
-    //TODO Send New Message Notification
     if (!Messages.length) {
       !loading &&
         //@ts-ignore

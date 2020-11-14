@@ -5,7 +5,7 @@ import { ChatSidebarSpinner } from "components/utils/Spinners/ChatSidebarSpinner
 import AddFriend from "components/ChatComponents/ChatComponents/TopBar/AddFriendButton/AddFriend";
 import ListItem from "./ListItem";
 import useWindowSize from "@rooks/use-window-size";
-import { SearchStyles } from "../Contacts/SearchFriends";
+import ChatSearch from "./ChatSearch";
 
 const Chats = () => {
   const { innerWidth } = useWindowSize();
@@ -29,23 +29,7 @@ const Chats = () => {
             </div>
           </div>
           <div className="search-box chat-search-box">
-            <SearchStyles className="mt-2">
-              <div className="input-group mb-3 position-relative  input-group-lg rounded-lg">
-                <div className="input-group-prepend">
-                  <button
-                    className="btn btn-link text-muted pr-1 position-absolute text-decoration-none"
-                    type="button"
-                  >
-                    <i className="ri-search-line search-icon font-size-18"></i>
-                  </button>
-                </div>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search messages or users"
-                />
-              </div>
-            </SearchStyles>
+            <ChatSearch />
           </div>
           {/* Search Box */}
         </div>

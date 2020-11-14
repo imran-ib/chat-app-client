@@ -1,8 +1,34 @@
+import React, { useState } from "react";
 import { AccountForm } from "components/styles/SharedStyles";
-import React from "react";
 import styled from "styled-components";
 
-const SearchFriends = () => {
+interface Props {
+  Friends: {
+    MessagesRecieved: [];
+    MessagesSent: [];
+    avatar: string;
+    email: string;
+    id: number;
+    isActive: boolean;
+    lastSeen: string;
+    lastTyped: string;
+    username: string;
+  }[];
+}
+
+const SearchFriends: React.FC<Props> = ({ Friends }) => {
+  const [searchTerm, setSearchTerm] = React.useState("");
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const results = !searchTerm
+    ? Friends
+    : Friends.filter((Friend) =>
+        Friend.username.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+      );
+
   return (
     <>
       <div className="search-box chat-search-box">
@@ -20,8 +46,14 @@ const SearchFriends = () => {
               type="text"
               className="form-control"
               placeholder="Search users.."
+              value={searchTerm}
+              onChange={(e) => handleChange(e)}
             />
           </div>
+          <ul>
+            {results.length > 0 &&
+              results.map((term) => <li key={term.id}>{term?.username}</li>)}
+          </ul>
         </SearchStyles>
       </div>
       {/* <!-- End search-box --> */}
