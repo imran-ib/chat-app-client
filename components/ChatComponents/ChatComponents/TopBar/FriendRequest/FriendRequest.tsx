@@ -6,7 +6,7 @@ import {
   useConfirmFriendRequestMutation,
   useGetFriendRequestsLazyQuery,
   FriendsDocument,
-  useAddFriendMutation
+  useAddFriendMutation,
 } from "generated/graphql";
 import TooltipComponent from "components/utils/Tooltip/Tootip";
 import { toast } from "react-toastify";
@@ -73,7 +73,6 @@ const FriendRequest = () => {
                             ConfirmFriendRequest({
                               variables: {
                                 id: req.id,
-                                FriendId: req.sender.id,
                               },
                             }).then(() => {
                               //@ts-ignore
