@@ -16,7 +16,8 @@ function createApolloClient() {
   let token: string | null;
 
   const httpLink = createHttpLink({
-    uri: "http://localhost:4000/",
+    // uri: "http://localhost:4000/",
+    uri: "https://server-ichat.herokuapp.com/",
     credentials: "same-origin",
   });
 
