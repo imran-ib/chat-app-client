@@ -24,7 +24,7 @@ function createApolloClient() {
   const wsLink = process.browser
     ? new WebSocketLink({
         // uri: `ws://localhost:4000/graphql`,
-        uri: `https://server-ichat.herokuapp.com/graphql`,
+        uri: `ws://server-ichat.herokuapp.com/graphql`,
         options: {
           reconnect: true,
           connectionParams: {
