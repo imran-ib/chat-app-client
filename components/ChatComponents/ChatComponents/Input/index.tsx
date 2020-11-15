@@ -54,9 +54,16 @@ const ChatInput = () => {
   if (emojiPickerState) {
     emojiPicker = (
       <Picker
+        set="apple"
         title="Pick your emoji…"
         emoji="point_up"
-        style={{ position: "absolute", bottom: "20px", right: "20px" }}
+        style={{
+          position: "absolute",
+          bottom: "20px",
+          right: "20px",
+          // @ts-ignore
+          zIndex: "100000",
+        }}
         // @ts-ignore
         onSelect={(emoji) => SetMessage(message + emoji.native)}
       />
@@ -151,7 +158,6 @@ const ChatInput = () => {
                       title="Emoji"
                     >
                       🙂
-                      {/* <i className="ri-emotion-happy-line"></i> */}
                     </a>
                     {emojiPicker}
                   </li>

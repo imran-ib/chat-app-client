@@ -3,8 +3,7 @@ import styled from "styled-components";
 import Dropdown from "react-bootstrap/Dropdown";
 import { useAuthStore } from "components/Auth/Auth";
 import { useCurrentUserQuery } from "generated/graphql";
-
-
+import { useChatLeftSideStore } from "components/ChatComponents/ChatState";
 
 export const DotMenuStyle = styled.div`
   .MenuStyles {
@@ -17,7 +16,7 @@ export const DotMenuStyle = styled.div`
       margin-bottom: 1rem;
     }
   }
-  
+
   /* remove bootstrap default dropdown caret icon  */
   .dropdown-toggle {
     & ::after {
@@ -33,6 +32,7 @@ export const DotsMenuIcon = styled.div`
 `;
 
 const DotMenu = () => {
+  const setProfile: any = useChatLeftSideStore((state) => state.setProfile);
   const dispatch = useAuthStore((state) => state.dispatch);
   const {
     data,
@@ -50,7 +50,7 @@ const DotMenu = () => {
           id="dropdown-split-basic"
         />
         <Dropdown.Menu className="MenuStyles">
-          <Dropdown.Item>My Account</Dropdown.Item>
+          <Dropdown.Item onClick={() => setProfile()}>My Account</Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
               //@ts-ignore

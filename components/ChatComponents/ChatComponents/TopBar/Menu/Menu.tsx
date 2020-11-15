@@ -79,7 +79,6 @@ const Menu: React.FC<Props> = ({ CurrentUser, otherUser }) => {
                 DeleteChat();
               }}
               className="dropdown-item"
-              href="#"
             >
               {loading ? "Processing.." : "Clear Chat"}
             </a>

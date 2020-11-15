@@ -46,7 +46,18 @@ const UnFriend = (props: Props) => {
 
   return (
     <>
-      <a onClick={() => RemoveFriend()} className="dropdown-item">
+      <a
+        onClick={() => {
+          if (
+            confirm(
+              `Are You Sure You Want To Remove ${otherUser.username} from your Contact list`
+            )
+          ) {
+            RemoveFriend();
+          }
+        }}
+        className="dropdown-item"
+      >
         {loading ? "Wait.." : "Remove Contact"}
       </a>
     </>

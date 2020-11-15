@@ -8,8 +8,6 @@ import { useModalStore } from "components/ChatComponents/ChatState/ModalState";
 import { useDeleteMessageMutation, GetChatsDocument } from "generated/graphql";
 import { Alert } from "react-bootstrap";
 
-
-
 interface Props {
   i: any;
   SetToggle: any;
@@ -35,7 +33,7 @@ const DropDownMenu: React.FC<Props> = ({
   const [DeleteMessage, { loading, error }] = useDeleteMessageMutation({
     refetchQueries: [{ query: GetChatsDocument }],
 
-    onCompleted: () => toast.error(`Messages Deleted`),
+    onCompleted: () => toast.info(`👍 Messages Deleted`),
   });
   const [copiedText, setCopiedText] = useState("");
   const [SelectedMenu, setSelectedMenu] = useState(0);

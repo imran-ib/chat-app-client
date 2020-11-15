@@ -13,7 +13,6 @@ import {
 } from "generated/graphql";
 import OPTFormComponent from "./OTPForm";
 import { useAuthStore } from "components/Auth/Auth";
-import { useRouter } from "next/router";
 import GoogleAuth from "./GoogleAuth";
 
 type FormValues = {
@@ -24,7 +23,6 @@ type FormValues = {
 const Login: React.FC<any> = () => {
   const dispatch = useAuthStore((state) => state.dispatch);
   const {
-    data,
     loading: UserLoading,
     error: userError,
     called,
@@ -54,13 +52,15 @@ const Login: React.FC<any> = () => {
   return (
     <LoginStyles>
       <Heading>Login</Heading>
-      {error && (
+      {error ? (
         <Alert
           variant="danger"
           style={{ fontSize: "1.5rem", textAlign: "center" }}
         >
           {error.message}
         </Alert>
+      ) : (
+        ""
       )}
       <Form method="Post" onSubmit={handleSubmit(onSubmit)}>
         <input
@@ -69,10 +69,12 @@ const Login: React.FC<any> = () => {
           type="text"
           placeholder="Email Or Username"
         />
-        {errors.emailOrUsername && (
+        {errors.emailOrUsername ? (
           <Alert variant="danger" style={{ fontSize: "1.5rem" }}>
             Please Provide A Valid Email Address Or Username
           </Alert>
+        ) : (
+          ""
         )}
 
         <input
@@ -81,10 +83,12 @@ const Login: React.FC<any> = () => {
           placeholder="Password"
           ref={register({ required: true })}
         />
-        {errors.password && (
+        {errors.password ? (
           <Alert variant="danger" style={{ fontSize: "1.5rem" }}>
             Please Input Valid Password
           </Alert>
+        ) : (
+          ""
         )}
         <ButtonGroup>
           {loading ? (
@@ -118,12 +122,12 @@ const Login: React.FC<any> = () => {
   );
 };
 
-const Text = styled.p`
-  font-size: 2rem;
-  text-align: center;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-`;
+// const Text = styled.p`
+//   font-size: 2rem;
+//   text-align: center;
+//   margin-top: 1rem;
+//   margin-bottom: 1rem;
+// `;
 const LoginStyles = styled.div``;
 
 const ButtonGroup = styled.div`

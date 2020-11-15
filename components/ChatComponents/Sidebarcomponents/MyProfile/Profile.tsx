@@ -51,14 +51,14 @@ const Profile = () => {
                         : "dropdown-menu dropdown-menu-right"
                     }
                   >
-                    <a className="dropdown-item" href="#">
+                    <a className="dropdown-item" >
                       Edit
                     </a>
-                    <a className="dropdown-item" href="#">
+                    <a className="dropdown-item" >
                       Action
                     </a>
                     <div className="dropdown-divider"></div>
-                    <a className="dropdown-item" href="#">
+                    <a className="dropdown-item" >
                       Another action
                     </a>
                   </DropDownMenu>

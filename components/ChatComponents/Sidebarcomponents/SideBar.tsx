@@ -42,7 +42,6 @@ const SideBar = () => {
               className={state.Profile ? "nav-link active" : "nav-link"}
               id="pills-user-tab"
               data-toggle="pill"
-              href="#pills-user"
               role="tab"
             >
               <i className="ri-user-2-line"></i>
@@ -60,7 +59,6 @@ const SideBar = () => {
               className={state.Chats ? "nav-link active" : "nav-link"}
               id="pills-chat-tab"
               data-toggle="pill"
-              href="#pills-chat"
               role="tab"
             >
               <i className="ri-message-3-line"></i>
@@ -79,7 +77,7 @@ const SideBar = () => {
               className="nav-link"
               id="pills-groups-tab"
               data-toggle="pill"
-              href="#pills-groups"
+
               role="tab"
             >
               <i className="ri-group-line"></i>
@@ -97,13 +95,12 @@ const SideBar = () => {
               className={state.Contacts ? "nav-link active" : "nav-link"}
               id="pills-contacts-tab"
               data-toggle="pill"
-              href="#pills-contacts"
               role="tab"
             >
               <i className="ri-contacts-line"></i>
             </a>
           </li>
-          <li
+          {/* <li
             className="nav-item"
             data-toggle="tooltip"
             data-trigger="hover"
@@ -115,12 +112,12 @@ const SideBar = () => {
               className={state.Settings ? "nav-link active" : "nav-link"}
               id="pills-setting-tab"
               data-toggle="pill"
-              href="#pills-setting"
+              
               role="tab"
             >
               <i className="ri-settings-2-line"></i>
             </a>
-          </li>
+          </li> */}
         </ul>
       </div>
 

@@ -9,6 +9,7 @@ import {
 } from "components/ChatComponents/ChatState";
 import useWindowSize from "@rooks/use-window-size";
 import UnFriend from "components/ChatComponents/ChatComponents/TopBar/AddFriendButton/UnFriend";
+import { toast } from "react-toastify";
 
 interface Props {
   friend: any;
@@ -83,7 +84,14 @@ const Friend: React.FC<Props> = ({ friend }) => {
             <a onClick={setOtherUsersProfileActive} className="dropdown-item">
               Profile
             </a>
-            <a className="dropdown-item">Block</a>
+            <a
+              onClick={() => {
+                toast.warn(`User Cannot Be Blocked For Now`);
+              }}
+              className="dropdown-item"
+            >
+              Block
+            </a>
             <UnFriend otherUser={friend} />
           </MenuStyles>
         </div>
