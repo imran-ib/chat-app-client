@@ -43,15 +43,14 @@ const FriendRequest = () => {
       {requests?.length ? (
         <>
           <DropDownStyle>
-            <Dropdown drop="left">
+            <Dropdown>
               <Dropdown.Toggle id="dropdown-custom-components">
-                <Badge pill variant="primary">
-                  <Icon className="ri-user-2-line">
-                    {/* 
+                <Icon className="ri-user-2-line"></Icon>
+                <span className="badge badge-soft-danger badge-pill mb-1">
+                  {/* 
                     //@ts-ignore */}
-                    <Number> {requests?.length}</Number>{" "}
-                  </Icon>
-                </Badge>
+                  <Number> {requests?.length}</Number>{" "}
+                </span>
               </Dropdown.Toggle>
 
               <Dropdown.Menu className="MenuStyles">
@@ -67,7 +66,7 @@ const FriendRequest = () => {
                       />
                       <span className="username"> {req.sender.username}</span>
 
-                      <div className="buttons">
+                      <div className="buttons btn btn-sm">
                         <span
                           onClick={() =>
                             ConfirmFriendRequest({
@@ -82,13 +81,13 @@ const FriendRequest = () => {
                               });
                             })
                           }
-                          className="confirm m-2 text-primary "
+                          className="confirm m-2 p-1 btn-success"
                         >
                           {loading ? "wait..." : "Accept"}
                         </span>
                         <span
                           onClick={() => alert("Are you sure")}
-                          className="reject m-2 text-danger"
+                          className="reject m-2 p-1 btn-danger"
                         >
                           Reject
                         </span>
@@ -111,13 +110,14 @@ const FriendRequest = () => {
 
 const ListItem = styled.span`
   display: flex;
+
   align-items: center;
   & img {
     margin-right: 1rem;
   }
   .username {
     color: #c9c9c9;
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
   .confirm {
     color: #c9c9c9;
@@ -151,8 +151,8 @@ export const DropDownStyle = styled.div`
   }
   .MenuStyles {
     width: 300px;
+    font-size: 1rem;
     background-color: #292f3f;
-
     box-shadow: -15px 15px 15px rgba(55, 62, 78, 0.5);
   }
   /* remove bootstrap default dropdown caret icon  */

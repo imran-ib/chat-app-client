@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import DotMenu from "components/utils/Menu";
-import { useChatLeftSideStore } from "../ChatState";
+import { useConversationStore, useChatLeftSideStore } from "../ChatState";
+// import { useConversationStore } from "components/ChatComponents/ChatState";
+import FriendRequest from "../ChatComponents/TopBar/FriendRequest/FriendRequest";
+import styled from "styled-components";
 
 const SideBar = () => {
+  const requests: any = useConversationStore((state) => state.request);
   const state:
     | {
         setProfile: () => void;
@@ -12,6 +16,7 @@ const SideBar = () => {
         setGroup: () => void;
       }
     | any = useChatLeftSideStore();
+
   return (
     <div className="side-menu flex-lg-column mr-lg-1">
       {/* <!-- LOGO --> */}
@@ -100,24 +105,25 @@ const SideBar = () => {
               <i className="ri-contacts-line"></i>
             </a>
           </li>
-          {/* <li
-            className="nav-item"
-            data-toggle="tooltip"
-            data-trigger="hover"
-            data-placement="top"
-            title="Settings"
-          >
-            <a
-              onClick={() => state.setSettings()}
-              className={state.Settings ? "nav-link active" : "nav-link"}
-              id="pills-setting-tab"
-              data-toggle="pill"
-              
-              role="tab"
+          {requests.length ? (
+            <li
+              className="nav-item"
+              data-toggle="tooltip"
+              data-trigger="hover"
+              data-placement="top"
+              title="Settings"
             >
-              <i className="ri-settings-2-line"></i>
-            </a>
-          </li> */}
+              <FriendRequestIconStyles
+                className={state.Settings ? "nav-link active" : "nav-link"}
+                id="pills-setting-tab"
+                data-toggle="pill"
+                role="tab"
+              >
+                <FriendRequest />
+                {/* <i className="ri-settings-2-line"></i> */}
+              </FriendRequestIconStyles>
+            </li>
+          ) : null}
         </ul>
       </div>
 
@@ -135,5 +141,11 @@ const SideBar = () => {
     </div>
   );
 };
+
+const FriendRequestIconStyles = styled.a`
+  & i {
+    font-size: 2rem;
+  }
+`;
 
 export default SideBar;

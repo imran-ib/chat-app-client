@@ -51,7 +51,10 @@ const Home = () => {
         </Col>
         <Col lg={6} sm={12}>
           <AccountCard>
-            <Logo src="images/logo.png" alt="Site logo" />
+            <Logo
+              src="https://res.cloudinary.com/iib-webdevs/image/upload/v1605546107/DontDeleteMe/Logo.png"
+              alt="Site logo"
+            />
             {state.Register && <Register />}
             {state.Login && <Login />}
             {state.ForgotPassword && <ForgetPassword />}
