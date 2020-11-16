@@ -1521,6 +1521,11 @@
     lodash "^4.17.15"
     lodash-es "^4.17.15"
 
+"@rooks/use-did-mount@^3.6.0":
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/@rooks/use-did-mount/-/use-did-mount-3.6.0.tgz#0f299cdee3cf26c4aed9ca781b5cdd891968f03c"
+  integrity sha512-mIa5yMkK4otK3y8sF0JUctrkUkdpG9zRs74uyjJQdfGHg0vZ8YXywxN2l+SHMfreyqlcvlX+66NPBCTJBQsW0Q==
+
 "@rooks/use-outside-click-ref@^3.6.0":
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/@rooks/use-outside-click-ref/-/use-outside-click-ref-3.6.0.tgz#9ce3648137c275e75327d043fffde7dacc91da7a"

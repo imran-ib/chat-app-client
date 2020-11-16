@@ -64,8 +64,11 @@ const ChatInput = () => {
           // @ts-ignore
           zIndex: "100000",
         }}
-        // @ts-ignore
-        onSelect={(emoji) => SetMessage(message + emoji.native)}
+        onSelect={(emoji) => {
+          // @ts-ignore
+          SetMessage(message + emoji.native);
+          SetEmojiPicker(false);
+        }}
       />
     );
   }

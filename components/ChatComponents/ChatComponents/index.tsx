@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useChatLeftSideStore } from "../ChatState";
 import Conversation from "./Conversation";
 import ChatInput from "./Input";
@@ -31,9 +31,7 @@ const ChatComponents = () => {
 
           <ChatInput />
         </div>
-        <OtherUserProfile
-       
-        />
+        <OtherUserProfile />
       </div>
     </div>
   );

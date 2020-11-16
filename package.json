@@ -16,6 +16,7 @@
     "@graphql-codegen/cli": "^1.17.8",
     "@graphql-codegen/typescript-operations": "^1.17.8",
     "@graphql-codegen/typescript-react-apollo": "^2.0.6",
+    "@rooks/use-did-mount": "^3.6.0",
     "@rooks/use-outside-click": "^3.6.0",
     "@rooks/use-outside-click-ref": "^3.6.0",
     "@rooks/use-toggle": "^3.6.0",

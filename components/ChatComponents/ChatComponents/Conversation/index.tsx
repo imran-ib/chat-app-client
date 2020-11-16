@@ -17,7 +17,6 @@ import { useUser } from "components/Auth/Auth";
 const ConversationStyles = styled.div`
   /* height: 600px; */
   overflow: auto;
-
   /* Scroll bar */
   ::-webkit-scrollbar {
     width: 0.4em;
@@ -35,7 +34,6 @@ const ConversationStyles = styled.div`
 
 const Conversation = () => {
   const dispatch = useConversationStore((state) => state.dispatch);
-
   const CurrentUser = useUser();
   const [CurrentMessage, setCurrentMessage] = useState();
   const show = useModalStore((state) => state.showFriendsListModal);
@@ -61,7 +59,6 @@ const Conversation = () => {
   );
 
   if (!Messages || !Messages.length || !user) return <p></p>;
-
   if (!loading && !error && called && data) {
     //@ts-ignore
     dispatch({
@@ -94,8 +91,19 @@ const Conversation = () => {
       )}
 
       <ConversationStyles
+        id="scroll"
         className="chat-conversation p-3 p-lg-4"
         data-simplebar="init"
+        onLoad={() => {
+          if (typeof window !== "undefined") {
+            const div = window.document.getElementById("scroll");
+            let bottom = div?.scrollTop;
+            bottom = div?.scrollHeight;
+            div?.scrollTo({
+              top: bottom,
+            });
+          }
+        }}
       >
         <ul className="list-unstyled mb-0">
           <li>
@@ -114,14 +122,14 @@ const Conversation = () => {
               )}
               {/* image */}
               {chat.image ? (
-                <>
+                <div>
                   <ImageMessage
                     setCurrentMessage={setCurrentMessage}
                     chat={chat}
                     user={user}
                     i={i}
                   />
-                </>
+                </div>
               ) : (
                 ""
               )}
